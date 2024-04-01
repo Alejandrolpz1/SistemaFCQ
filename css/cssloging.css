@@ -1,0 +1,197 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #F0F2F5;
+}
+
+
+
+nav ul {
+    background-color: #237ABA;
+    width: 100%;
+    list-style-type: none;
+    text-align: center;
+}
+
+nav li {
+    display: inline-flex;
+}
+
+nav a {
+    text-decoration: none;
+    color: #072146;
+    padding: 10px;
+    width: 150px;
+}
+
+nav li:hover {
+    background-color: #EAF9FA;
+}
+
+#tituloLaboratorio {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    font-size: 20px;
+    color: #737373;
+    padding: 20px;
+    border-bottom: 1px solid #237ABA;
+}
+
+#tituloLaboratorio img {
+    margin-right: 10px;
+}
+
+.contenedor3 {
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.parte {
+    background-color: white;
+    padding: 22px;
+    color: black;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 35%;
+    height: 280px;
+    text-align: center;
+}
+
+.parteu {
+    background-color: #4AA8D8;
+    padding: 22px;
+    color: black;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 45%;
+    text-align: center;
+}
+
+.parteu h2 {
+    font-family: Courier New, Arial, sans-serif;
+    font-size: 25px;
+}
+
+.caja {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #dddfe2;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.caja:focus,
+.caja:hover {
+    border-color: #0866ff;
+    outline: none;
+}
+
+a{
+    text-decoration: none;
+    display: block;
+}
+button {
+    --primary-color: #42b72a;
+    --secondary-color: #fff;
+    --hover-color: #0866ff;
+    --arrow-width: 10px;
+    --arrow-stroke: 2px;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: 20px;
+    color: var(--secondary-color);
+    padding: 1em 1.8em;
+    background: var(--primary-color);
+    display: flex;
+    transition: 0.2s background;
+    align-items: center;
+    gap: 0.6em;
+    font-weight: bold;
+    
+  }
+  
+  button .arrow-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  button .arrow {
+    margin-top: 1px;
+    width: var(--arrow-width);
+    background: var(--primary-color);
+    height: var(--arrow-stroke);
+    position: relative;
+    transition: 0.2s;
+  }
+  
+  button .arrow::before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    border: solid var(--secondary-color);
+    border-width: 0 var(--arrow-stroke) var(--arrow-stroke) 0;
+    display: inline-block;
+    top: -3px;
+    right: 3px;
+    transition: 0.2s;
+    padding: 3px;
+    transform: rotate(-45deg);
+  }
+  
+  button:hover {
+    background-color: var(--hover-color);
+  }
+  
+  button:hover .arrow {
+    background: var(--secondary-color);
+  }
+  
+  button:hover .arrow:before {
+    right: 0;
+  }
+
+/* Media queries para pantallas más pequeñas, como tabletas y móviles */
+@media only screen and (max-width: 768px) {
+    .parte {
+        width: 70%; /* Ajusta el ancho para pantallas más pequeñas */
+        height: auto; /* Ajusta la altura automáticamente */
+    }
+
+    .parteu {
+        width: 80%; /* Ajusta el ancho para pantallas más pequeñas */
+    }
+
+    /* Agrega más estilos específicos para pantallas más pequeñas si es necesario */
+}
+
+/* Otras media queries según sea necesario para dispositivos más pequeños */
+@media only screen and (max-width: 480px) {
+    .parte {
+        width: 90%; /* Ajusta el ancho para dispositivos muy pequeños */
+    }
+
+    .parteu {
+        width: 95%; /* Ajusta el ancho para dispositivos muy pequeños */
+    }
+    #tituloLaboratorio {
+        display: block;
+        text-align: center;
+    }
+
+    #tituloLaboratorio img {
+        display: block;
+        margin: 0 auto;
+        width: 40px;
+    }
+
+}
