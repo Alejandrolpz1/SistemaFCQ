@@ -1,0 +1,104 @@
+/* Parámetros generales */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Estilos generales */
+body {
+    background-color: #FFFDFD;
+    font-family: 'Arial', sans-serif;
+}
+
+#tituloLaboratorio {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    font-size: 20px;
+    color: #737373;
+    padding: 20px;
+    border-bottom: 1px solid #237ABA;
+}
+
+#tituloLaboratorio img {
+    margin-right: 10px;
+}
+
+nav ul {
+    background-color: #237ABA;
+    width: 100%;
+    list-style-type: none;
+    text-align: center;
+}
+
+nav li {
+    display: inline-flex;
+}
+
+nav a {
+    text-decoration: none;
+    color: #072146;
+    padding: 10px;
+    width: 150px;
+}
+
+nav li:hover {
+    background-color: #EAF9FA;
+}
+
+.contenedor {
+    margin: 5px;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 33.3% 33.3% 33.3%;
+}
+
+.parte {
+    background-color:  #4AA8D8;
+    font-weight: bold;
+    padding: 22px;
+    text-align: center;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    color: black;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.parte h4 {
+    font-family: Courier New,Arial, sans-serif;
+    font-size: 20px;
+}
+
+.parte p {
+    font-family: Courier New,Arial, sans-serif;
+    font-size: 16px;
+}
+
+/* Media queries para pantallas más pequeñas */
+@media only screen and (max-width: 768px) {
+    nav ul {
+        justify-content: space-around;
+    }
+
+    nav a {
+        padding: 8px;
+        width: auto;
+        display: block;
+    }
+
+    #tituloLaboratorio {
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .contenedor {
+        grid-template-columns: 50% 50%;
+    }
+
+    .parte {
+        padding: 15px;
+        font-size: 18px;
+    }
+}

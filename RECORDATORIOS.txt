@@ -1,0 +1,9 @@
+RECORDATORIOS
+
+habilitar el hash de contraseñas en secretarias y profesores. Pero hasta que la interfaz del admin quede correcta
+
+Procesra alumnos dados de baja en otra tabla 
+
+confugiracion en la bd 
+
+Agregar una funcion que actualize el semestre a todos los alumnos que puedan pasar
