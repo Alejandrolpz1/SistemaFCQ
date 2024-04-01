@@ -21,8 +21,6 @@ function conectarDB() {
     }
 }
 
-
-
 function consultarLoginSecretarias($numEmp, $password) {
     $conexion = conectarDB();
 
@@ -54,6 +52,47 @@ function consultarLoginSecretarias($numEmp, $password) {
     }
 }
 
+/*function SesionSecretarias() {
+    session_start();
+    if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
+     header("Location: LoginSecretarias.php");
+        exit();
+    }
+    
+    $inactive_time = 1800; 
+    
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $inactive_time)) {
+        // Si ha pasado demasiado tiempo, cerrar sesión
+        session_unset();
+        session_destroy();
+        header("Location: LoginSecretarias.php");
+        exit();
+    }
+    
+    // Actualizar la marca de tiempo de la última actividad
+    $_SESSION['last_activity'] = time();
+}*/
+
+
+function eliminarAdmin($id) {
+    $conexion = conectarDB();
+
+    try {
+        // Consulta preparada para evitar la inyección SQL
+        $consulta = $conexion->prepare("DELETE FROM admin WHERE Id = :id");
+
+        $consulta->bindParam(':id', $id, PDO::PARAM_INT);
+
+        return $consulta->execute();
+    } catch (PDOException $e) {
+        // Manejo de errores (puedes personalizar esto según tus necesidades)
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
+    }
+}
 
 function agregarSecretaria($numEmp, $nombre, $apellido, $password) {
     $conexion = conectarDB();
@@ -79,28 +118,6 @@ function agregarSecretaria($numEmp, $nombre, $apellido, $password) {
         $conexion = null;
     }
 }
-
-
-function eliminarAdmin($id) {
-    $conexion = conectarDB();
-
-    try {
-        // Consulta preparada para evitar la inyección SQL
-        $consulta = $conexion->prepare("DELETE FROM admin WHERE Id = :id");
-
-        $consulta->bindParam(':id', $id, PDO::PARAM_INT);
-
-        return $consulta->execute();
-    } catch (PDOException $e) {
-        // Manejo de errores (puedes personalizar esto según tus necesidades)
-        error_log("Error de base de datos: " . $e->getMessage(), 0);
-        return false;
-    } finally {
-        // Cerrar la conexión
-        $conexion = null;
-    }
-}
-
 
 
 function editarSecretaria($numEmp, $nombre, $apellido, $password) {
@@ -177,7 +194,7 @@ function eliminarSecretaria($numEmp) {
 
 
 
-function agregarProfesor($numEmp, $nombre, $apellidos, $correo, $telefono, $passwordHash) {
+function agregarProfesor($numEmp, $nombre, $apellidos, $correo, $telefono, $password) {
     $conexion = conectarDB();
 
     try {
@@ -189,7 +206,7 @@ function agregarProfesor($numEmp, $nombre, $apellidos, $correo, $telefono, $pass
         $consulta->bindParam(':apellidos', $apellidos, PDO::PARAM_STR);
         $consulta->bindParam(':correo', $correo, PDO::PARAM_STR);
         $consulta->bindParam(':telefono', $telefono, PDO::PARAM_INT);
-        $consulta->bindParam(':password', $passwordHash, PDO::PARAM_STR); // Usamos el hash de la contraseña
+        $consulta->bindParam(':password', $password, PDO::PARAM_STR);
 
         $consulta->execute();
 
@@ -204,6 +221,8 @@ function agregarProfesor($numEmp, $nombre, $apellidos, $correo, $telefono, $pass
     }
 }
 
+
+
 function editarProfesor($numEmp, $nombre, $apellidos, $correo, $telefono, $password) {
     $conexion = conectarDB();
 
@@ -215,7 +234,7 @@ function editarProfesor($numEmp, $nombre, $apellidos, $correo, $telefono, $passw
         $consulta->bindParam(':apellidos', $apellidos, PDO::PARAM_STR);
         $consulta->bindParam(':correo', $correo, PDO::PARAM_STR);
         $consulta->bindParam(':telefono', $telefono, PDO::PARAM_INT);
-        $consulta->bindParam(':password', $password, PDO::PARAM_STR); // La contraseña ya está cifrada
+        $consulta->bindParam(':password', $password, PDO::PARAM_STR);
         $consulta->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
 
         return $consulta->execute();
@@ -263,7 +282,8 @@ function obtenerListaProfesores() {
 
 
 
-function consultarLoginProfesores($numEmp) {
+
+function consultarLoginProfesores($numEmp, $password) {
     $conexion = conectarDB();
 
     try {
@@ -274,44 +294,38 @@ function consultarLoginProfesores($numEmp) {
 
         $usuario = $consulta->fetch(PDO::FETCH_ASSOC);
 
-        return $usuario; // Devuelve el registro del usuario encontrado
+       
+        if ($usuario && $password === $usuario['Password']) {
+            return $usuario;
+        } else {
+            return false;
+        }
     } catch (PDOException $e) {
-        // Manejo de errores
+       
         error_log("Error de base de datos: " . $e->getMessage(), 0);
         return false;
     } finally {
-        // Cerrar la conexión
+        
         $conexion = null;
     }
 }
 
-function consultarLoginAdmin($usuario, $password_hashed) {
+
+function consultarLoginAdmin($usuario, $password) {
     $conexion = conectarDB();
 
     try {
-        // Consulta preparada para evitar la inyección SQL
         $consulta = $conexion->prepare("SELECT * FROM admin WHERE Usuario = :usuario");
         $consulta->bindParam(':usuario', $usuario, PDO::PARAM_STR);
         $consulta->execute();
 
         $admin = $consulta->fetch(PDO::FETCH_ASSOC);
 
-        // Verificar si se encontró un usuario
-        if ($admin) {
-            // Obtener el hash de la contraseña almacenada en la base de datos
-            $stored_password_hashed = $admin['Password'];
-
-            // Comparar el hash proporcionado por el usuario con el hash almacenado
-            if ($password_hashed === $stored_password_hashed) {
-                // La contraseña es correcta, devolver el registro del usuario
-                return $admin;
-            }
+        if ($admin && $password === $admin['Password']) {
+            return $admin;
         }
-
-        // Si no se encuentra un usuario o la contraseña es incorrecta, devolver false
         return false;
     } catch (PDOException $e) {
-        // Manejo de errores (puedes personalizar esto según tus necesidades)
         error_log("Error de base de datos: " . $e->getMessage(), 0);
         return false;
     } finally {
@@ -319,10 +333,6 @@ function consultarLoginAdmin($usuario, $password_hashed) {
         $conexion = null;
     }
 }
-
-
-
-
 //Ocupada para ConfirmacionEliminarAlumno.php y EditarAlumnos.php
 /*function consultarAlumnosWhereMatricula($matriculalumno) {
     $conexion = conectarDB();
@@ -343,8 +353,6 @@ function consultarLoginAdmin($usuario, $password_hashed) {
         $conexion = null;
     }
 }*/
-
-
 function consultarAlumnosWhereMatricula($matriculalumno) {
     $conexion = conectarDB();
 
@@ -394,12 +402,12 @@ function eliminarAlumnosWhereMatricula($matriculalumno) {
 		$sql -> bindParam(':Matricula', $matriculalumno,PDO::PARAM_STR);
 		$qryExecute = $sql->execute();
 		if($qryExecute){
-            header("refresh:1;url=IndexSecretarias.php");
+            header("refresh:1;url=PanelAlumnos.php");
             exit("Operación exitosa. Redirigiendo en 1 segundo...");
 		}
 		else{
-            header("refresh:1;url=IndexSecretarias.php");
-            exit("Ha ocurrido un error. Redirigiendo en un segundo...");
+            header("refresh:3;url=PanelAlumnos.php");
+            exit("Ha ocurrido un error. Redirigiendo en tres segundos...");
         }
         return $registros;
     } catch (PDOException $e) {
@@ -431,7 +439,7 @@ function actualizarAlumnos($matricula, $nombre, $apellido, $telefono, $correo, $
         $qryExecute = $stmt->execute();
 
         if ($qryExecute) {
-            header("refresh:1;url=IndexSecretarias.php");
+            header("refresh:1;url=PanelAlumnos.php");
             exit("Datos Actualizados. Redirigiendo en 1 segundos...");
 
         } else {
@@ -515,11 +523,7 @@ function editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password) {
         $consulta->bindParam(':apellido', $apellido, PDO::PARAM_STR);
         $consulta->bindParam(':cargo', $cargo, PDO::PARAM_STR);
         $consulta->bindParam(':usuario', $usuario, PDO::PARAM_STR);
-
-        // Hash de la contraseña
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $consulta->bindParam(':password', $passwordHash, PDO::PARAM_STR);
-
+        $consulta->bindParam(':password', $password, PDO::PARAM_STR);
         $consulta->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $consulta->execute();
@@ -532,8 +536,6 @@ function editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password) {
         $conexion = null;
     }
 }
-
-
 
 function obtenerListaAdmins() {
     $conexion = conectarDB();
@@ -587,13 +589,11 @@ function eliminarProfesor($numEmp) {
 
 
 
-
-// En funciones.php
 function obtenerNombreProfesor($numEmp) {
     $conexion = conectarDB();
 
     try {
-        $consulta = $conexion->prepare("SELECT Nombre FROM profesores WHERE NumEmp = :numEmp");
+        $consulta = $conexion->prepare("SELECT Nombre  FROM profesores WHERE NumEmp = :numEmp");
         $consulta->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
         $consulta->execute();
 
@@ -632,6 +632,18 @@ function generarPDFKardex($numero_matricula, $ciclo_escolar) {
         echo "<p>No se encontraron calificaciones para el alumno.</p>";
         return;
     }
+    // Obtener datos del director
+    $sqlDirector = "SELECT Nombre,Apellido, formacion_academica FROM admin WHERE Cargo = 'Director'";
+    $stmtDirector = $conexion->prepare($sqlDirector);
+    $stmtDirector->execute();
+    $director = $stmtDirector->fetch(PDO::FETCH_ASSOC);
+
+    // Obtener datos del coordinador académico
+    $sqlCoordinador = "SELECT Nombre,Apellido, formacion_academica FROM admin WHERE Cargo = 'Coordinador Académico'";
+    $stmtCoordinador = $conexion->prepare($sqlCoordinador);
+    $stmtCoordinador->execute();
+    $coordinador = $stmtCoordinador->fetch(PDO::FETCH_ASSOC);
+
     $pdf = new TCPDF();
     $pdf->SetAutoPageBreak(true, 15);
     $pdf->AddPage();
@@ -726,13 +738,20 @@ function generarPDFKardex($numero_matricula, $ciclo_escolar) {
     $pdf->Cell(80, 5, " ___________________________", 0, 1);
     $pdf->Cell(125, 5, "                Coordinador Académico ", 0, 0);
     $pdf->Cell(80, 5, "                    Director", 0, 1);
-    $pdf->Cell(115, 5, "       M. en C. Antonio Canseco Urbieta ", 0, 0);
-    $pdf->Cell(80, 5, "DR. en C. Juan Luis Bautista Martínez Martinez", 0, 1);
+    $pdf->Cell(115, 5, "       {$coordinador['formacion_academica']} {$coordinador['Nombre']} {$coordinador['Apellido']}", 0, 0);
+    $pdf->Cell(80, 5, "{$director['formacion_academica']} {$director['Nombre']} {$director['Apellido']}", 0, 1);
+    date_default_timezone_set('America/Mexico_City'); // Establecer zona horaria a México
+    $fecha_actual = date("d/m/Y H:i:s");
+
+    // Agregar el mensaje al final del PDF
+    $pdf->Ln(5);
+    $pdf->Cell(40, 10, "Generado el $fecha_actual.", 0, 1, 'C');
     // Mostrar el PDF en el navegador
     ob_end_clean(); // Limpiar cualquier salida de buffer anterior
     $pdf->Output("Kardex_Alumno_$numero_matricula.pdf", 'I');
     exit;
 }
+
 
 function consultarLaboratorios() {
     $conexion = conectarDB();
@@ -759,10 +778,6 @@ function consultarLaboratorios() {
         $conexion = null;
     }
 }
-
-
-
-
 function consultarLaboratorios1() {
     $conexion = conectarDB();
 
@@ -786,7 +801,6 @@ function consultarLaboratorios1() {
     }
 }
 
-//revisar si sera ultil 
 function obtenerMateriasPorNumEmp($numEmp) {
     $conexion = conectarDB();
 
@@ -898,14 +912,15 @@ function obtenerDetallesMateria($numEmpProfesor, $nombreMateria) {
 }
 
 
-function insertarAlumno($matricula, $nombre, $apellidos, $sexo, $telefono, $correo, $semestre, $grupo) {
+function insertarAlumno($matricula, $nombre, $apellidos, $sexo, $telefono, $correo, $semestre, $grupo, $carrera) {
     $conexion = conectarDB();
 
     if ($conexion) {
         try {
+            $status = "Activo";
             // Consulta de inserción
-            $sql = "INSERT INTO alumnos (Matricula, Nombre, Apellido, Sexo, Telefono, Correo, Semestre, Grupo)
-                    VALUES (:matricula, :nombre, :apellido, :sexo, :telefono, :correo, :semestre, :grupo)";
+            $sql = "INSERT INTO alumnos (Matricula, Nombre, Apellido, Sexo, Telefono, Correo, Semestre, Grupo, Estatus, formacion)
+                    VALUES (:matricula, :nombre, :apellido, :sexo, :telefono, :correo, :semestre, :grupo, :estatus, :formacion)";
 
             $consulta = $conexion->prepare($sql);
             $consulta->bindParam(':matricula', $matricula, PDO::PARAM_INT);
@@ -916,6 +931,8 @@ function insertarAlumno($matricula, $nombre, $apellidos, $sexo, $telefono, $corr
             $consulta->bindParam(':correo', $correo, PDO::PARAM_STR);
             $consulta->bindParam(':semestre', $semestre, PDO::PARAM_INT);
             $consulta->bindParam(':grupo', $grupo, PDO::PARAM_STR);
+            $consulta->bindParam(':estatus', $status, PDO::PARAM_STR);
+            $consulta->bindParam(':formacion', $carrera, PDO::PARAM_STR);
 
             $consulta->execute();
 
@@ -937,16 +954,15 @@ function insertarAlumno($matricula, $nombre, $apellidos, $sexo, $telefono, $corr
     }
 }
 function consultarAlumnos($carrera, $semestre, $grupo) {
-    $conexion = conectarDB();
 
+    $conexion = conectarDB();
     try {
+        $estatus = "Activo";
         // Consulta SQL
-        $sql = "SELECT a.*, f.Clave
-                FROM alumnos a
-                INNER JOIN cursar c ON a.Matricula = c.Matricula_Alumno
-                INNER JOIN materias m ON c.Clave_Materia = m.Clave
-                INNER JOIN formacion f ON m.ClaveFormacion = f.Clave
-                WHERE f.Clave = :carrera AND a.Semestre = :semestre AND a.Grupo = :grupo";
+        $sql = "SELECT a.*, f.Clave 
+        FROM alumnos a 
+        INNER JOIN formacion f ON a.formacion = f.Clave
+        WHERE f.Clave = :carrera AND a.Semestre = :semestre AND a.Grupo = :grupo AND a.Estatus = :estatus";
 
         // Preparar la declaración
         $statement = $conexion->prepare($sql);
@@ -954,10 +970,12 @@ function consultarAlumnos($carrera, $semestre, $grupo) {
         $statement->bindParam(':carrera', $carrera, PDO::PARAM_STR);
         $statement->bindParam(':semestre', $semestre, PDO::PARAM_STR);
         $statement->bindParam(':grupo', $grupo, PDO::PARAM_STR);
+        $statement->bindParam(':estatus', $estatus, PDO::PARAM_STR);
         // Ejecutar la consulta
         $statement->execute();
         // Obtener los resultados
         $registros = $statement->fetchAll();
+        
 
         return $registros;
     } catch (PDOException $e) {
@@ -968,32 +986,6 @@ function consultarAlumnos($carrera, $semestre, $grupo) {
         $conexion = null;
     }
 }
-
-
-//Ocupada para ConfirmacionEliminarAlumno.php y EditarAlumnos.php
-/*function consultarAlumnosWhereMatricula($matriculalumno) {
-    $conexion = conectarDB();
-
-    try {
-        // Consulta SQL
-        $statement = $conexion->prepare("SELECT * FROM alumnos WHERE Matricula = :matricula");
-        $statement->bindParam(':matricula', $matriculalumno, PDO::PARAM_INT);
-        $statement->execute();
-        $registros = $statement->fetch();
-
-        return $registros;
-    } catch (PDOException $e) {
-        error_log("Error de base de datos: " . $e->getMessage(), 0);
-        return false;
-    } finally {
-        // Cerrar la conexión
-        $conexion = null;
-    }
-}*/
-
-
-
-
 
 function obtenerCiclosEscolares() {
     $conexion = conectarDB();
@@ -1010,8 +1002,6 @@ function obtenerCiclosEscolares() {
         $conexion = null;
     }
 }
-
-
 function mostrarInformacionAlumno($numero_matricula, $ciclo_escolar) {
     $conexion = conectarDB();
 
@@ -1233,9 +1223,7 @@ function generarPDFCalificacionesMateria($clave_materia, $ciclo_escolar, $semest
     $pdf->Cell(80, 5, "Firma", 0, 1);
 
     // Obtener la fecha y hora actual
-
-    date_default_timezone_set('America/Mexico_City');
-    
+    date_default_timezone_set('America/Mexico_City'); // Establecer zona horaria a México
     $fecha_actual = date("d/m/Y H:i:s");
 
     // Agregar el mensaje al final del PDF
@@ -1328,7 +1316,7 @@ function ActualizarCalificaciones($calificacion,$claveMateria,$matricula){
         $qryExecute = $stmt->execute();
 
         if ($qryExecute) {
-            header("refresh:1;url=IndexSecretarias.php");
+            header("refresh:1;url=PanelAlumnos.php");
             exit("Datos Actualizados. Redirigiendo en 1 segundos...");
         } else {
             $errorInfo = $stmt->errorInfo();
@@ -1391,7 +1379,7 @@ function actualizarLaboratorios($idlaboratorio, $nombreLaboratorio, $encargado){
 
 
 ///LO PLATICO CON ALEJANDRO
-function insertarLaboratorios($idLab, $nombreLab, $jefeLab,$nombreMateria) {
+function insertarLaboratorios($idLab, $nombreLab, $jefeLab) {
     $conexion = conectarDB();
 
     if ($conexion) {
@@ -1399,23 +1387,6 @@ function insertarLaboratorios($idLab, $nombreLab, $jefeLab,$nombreMateria) {
             // Consulta de inserción
             
             //$clavemateria = consultaridmateria($nombreMateria)
-            $sql = "INSERT INTO laboratorios (IdLaboratorios, NomLaboratorio, JefeNumEmp) VALUES (:id,:nombre,:jefe)";
-
-            $consulta = $conexion->prepare($sql);
-            $consulta->bindParam(':id', $idLab, PDO::PARAM_INT);
-            $consulta->bindParam(':nombre', $nombreLab, PDO::PARAM_STR);
-            $consulta->bindParam(':jefe', $jefeLab, PDO::PARAM_STR);
-            $consulta->execute();
-            $filas = $consulta->rowCount();
-
-            if ($filas > 0) {
-                return "Laboratorio Agregado";
-            } else {
-                return "Hubo un Error al Agregar Laboratorio!!!";
-            }
-
-
-            //insertar 
             $sql = "INSERT INTO laboratorios (IdLaboratorios, NomLaboratorio, JefeNumEmp) VALUES (:id,:nombre,:jefe)";
 
             $consulta = $conexion->prepare($sql);
@@ -1475,386 +1446,499 @@ function consultaridmateria($ClaveMateria) {
     }
 }
 
-//funciones de ciclos escolares 
 
-function agregarCicloEscolar($ciclo_escolar) {
-    try {
-        $conexion = conectarDB();
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // Preparar la consulta para insertar el ciclo escolar
-        $stmt = $conexion->prepare("INSERT INTO ciclos_escolares (ciclo) VALUES (:ciclo_escolar)");
-
-        // Bind de los parámetros
-        $stmt->bindParam(':ciclo_escolar', $ciclo_escolar);
-
-        // Ejecutar la consulta
-        $stmt->execute();
-
-        // Verificar si se agregó el ciclo escolar correctamente
-        if ($stmt->rowCount() > 0) {
-            return true; // Ciclo escolar agregado con éxito
-        } else {
-            return false; // Error al agregar ciclo escolar
-        }
-    } catch (PDOException $e) {
-        echo "Error al agregar ciclo escolar: " . $e->getMessage();
-        return false;
-    }
-}
-
-function obtenerCiclosEscolares1() {
-    try {
-        $conexion = conectarDB();
-
-        // Preparar consulta
-        $stmt = $conexion->prepare("SELECT id, ciclo FROM ciclos_escolares");
-        $stmt->execute();
-
-        // Obtener resultados
-        $ciclos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $ciclos;
-    } catch (PDOException $e) {
-        echo "Error al obtener los ciclos escolares: " . $e->getMessage();
-        return array();
-    }
-}
-
-function activarCicloEscolar($idCiclo, $ciclo) {
-    try {
-        $conexion = conectarDB();
-
-        // Eliminar cualquier ciclo escolar activo existente
-        $stmt = $conexion->prepare("TRUNCATE TABLE ciclo_activo");
-        $stmt->execute();
-
-        // Insertar el nuevo ciclo escolar activo
-        $stmt = $conexion->prepare("INSERT INTO ciclo_activo (Id, Ciclo_Activo) VALUES (:id, :ciclo)");
-        $stmt->bindParam(':id', $idCiclo, PDO::PARAM_INT);
-        $stmt->bindParam(':ciclo', $ciclo, PDO::PARAM_STR);
-        $stmt->execute();
-
-        return true;
-    } catch (PDOException $e) {
-        echo "Error al activar el ciclo escolar: " . $e->getMessage();
-        return false;
-    }
-}
-
-function obtenerCicloEscolarPorId($idCiclo) {
-    try {
-        $conexion = conectarDB();
-
-        $stmt = $conexion->prepare("SELECT id, ciclo FROM ciclos_escolares WHERE id = :id");
-        $stmt->bindParam(':id', $idCiclo, PDO::PARAM_INT);
-        $stmt->execute();
-        $ciclo = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $ciclo;
-    } catch (PDOException $e) {
-        echo "Error al obtener el ciclo escolar por ID: " . $e->getMessage();
-        return false;
-    }
-}
-
-// AGREGAR MATERIAS A PROFESORES
-
-
-
-// Función para obtener la lista de materias
-function obtenerListaMaterias() {
-
+function eliminarLaboratorio($idLaboratorio){
     $conexion = conectarDB();
 
     try {
-        // Consulta SQL para obtener la lista de materias
-        $sql = "SELECT Clave, Nombre FROM materias";
-        
-    
-        $stmt = $conexion->prepare($sql);
-        $stmt->execute();
-        $listaMaterias = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+        $sql = "DELETE FROM laboratorios WHERE IdLaboratorios = :IdLab";
+		$sql = $conexion->prepare($sql);
+		$sql -> bindParam(':IdLab', $idLaboratorio,PDO::PARAM_STR);
+		$qryExecute = $sql->execute();
+		if($qryExecute){
+            header("refresh:1;url=ListaLaboratorios.php");
+            exit("Operación exitosa. Redirigiendo en 1 segundo...");
+		}
+		else{
+            header("refresh:3;url=ListaLaboratorios.php");
+            exit("Ha ocurrido un error. Redirigiendo en tres segundo...");
+        }
+        return $registros;
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
         // Cerrar la conexión
         $conexion = null;
-        
-        return $listaMaterias;
-    } catch (PDOException $e) {
-        echo "Error al obtener la lista de materias: " . $e->getMessage();
-        return array(); 
-    }
-}
-
-function asociarMateriaProfesor($numEmp, $materias) {
-    try {
-        $conexion = conectarDB();
-
-        // Verificar si el profesor existe
-        $stmt = $conexion->prepare("SELECT NumEmp FROM profesores WHERE NumEmp = :numEmp");
-        $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$row) {
-            echo "El profesor con el número de empleado $numEmp no existe.";
-            return;
-        }
-
-        // Obtener el ciclo escolar activo
-        $stmt = $conexion->prepare("SELECT Ciclo_Activo FROM ciclo_activo");
-        $stmt->execute();
-        $ciclo_escolar = $stmt->fetchColumn();
-
-        if (!$ciclo_escolar) {
-            echo "No se ha definido un ciclo escolar activo.";
-            return;
-        }
-
-        // Asociar materias al profesor con el ciclo escolar activo
-        foreach ($materias as $materia) {
-            $stmt = $conexion->prepare("INSERT INTO prof_mat (NumEmp, Clave_Materia, Ciclo_Escolar) VALUES (:numEmp, :materia, :ciclo_escolar)");
-            $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
-            $stmt->bindParam(':materia', $materia, PDO::PARAM_STR);
-            $stmt->bindParam(':ciclo_escolar', $ciclo_escolar, PDO::PARAM_STR);
-            $stmt->execute();
-        }
-
-        echo "Materias asociadas al profesor correctamente.";
-    } catch (PDOException $e) {
-        echo "Error al asociar la materia al profesor: " . $e->getMessage();
     }
 }
 
 
-// Función para obtener la lista de formaciones
-function obtenerListaFormaciones() {
-    try {
-  
-        $conexion = conectarDB();
-        $query = "SELECT Clave, Nombre FROM formacion";
+function ObtenerCicloActivo() {
+    $conexion = conectarDB();
 
-        $statement = $conexion->prepare($query);
+    try {
+        // Consulta SQL
+        $statement = $conexion->prepare("SELECT * FROM ciclo_activo");
         $statement->execute();
+        $registros = $statement->fetch();
 
-
-        $formaciones = $statement->fetchAll(PDO::FETCH_ASSOC);
-        return $formaciones;
+        // Devolver un array vacío si no hay resultados
+        return $registros ? $registros : [];
     } catch (PDOException $e) {
-        echo "Error al obtener la lista de formaciones: " . $e->getMessage();
-        return array(); 
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return [];  // Devolver un array vacío en caso de error
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
     }
 }
 
-
-// Función para obtener la lista de materias asociadas a una formación específica
-function obtenerMateriasPorFormacion($formacionClave) {
-    try {
-        $conexion = conectarDB();
-
-        // Preparar la consulta para obtener las materias asociadas a la formación
-        $stmt = $conexion->prepare("SELECT * FROM materias WHERE ClaveFormacion = :formacionClave");
-        $stmt->bindParam(':formacionClave', $formacionClave, PDO::PARAM_INT);
-        $stmt->execute();
-
-        // Obtener y devolver el resultado como un array asociativo
-        $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $materias;
-    } catch (PDOException $e) {
-        // Manejo de errores en caso de fallo en la conexión o consulta
-        echo "Error al obtener las materias por formación: " . $e->getMessage();
-        return array(); // Devolver un array vacío en caso de error
-    }
-}
-    
-
-function obtenerFormacionDeMaterias($materiasSeleccionadas) {
+function ObtenerMateriasFaltantes($carrera,$semestre) {
     $conexion = conectarDB();
 
     try {
-        // Preparar la consulta para obtener la formación de las materias seleccionadas
-        $sql = "SELECT DISTINCT ClaveFormacion FROM materias WHERE Clave IN ('" . implode("', '", $materiasSeleccionadas) . "')";
-
-        $stmt = $conexion->prepare($sql);
-        $stmt->execute();
-        $formacion = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        $listamaterias = $conexion->prepare("SELECT * FROM materias WHERE Semestre < :semestre AND ClaveFormacion = :formacion;");
+        $listamaterias->bindParam(':formacion', $carrera, PDO::PARAM_STR);
+        $listamaterias->bindParam(':semestre', $semestre, PDO::PARAM_STR);
+        $listamaterias->execute();
+        return $listamaterias;
+        echo $listamaterias;
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
         // Cerrar la conexión
         $conexion = null;
+    }
+}
 
-        return $formacion ? $formacion['ClaveFormacion'] : null;
+function MateriasRecomendadas($carrera,$semestre) {
+    $conexion = conectarDB();
+
+    try {
+        $listamaterias = $conexion->prepare("SELECT * FROM materias WHERE Semestre = :semestre AND ClaveFormacion = :formacion;");
+        $listamaterias->bindParam(':formacion', $carrera, PDO::PARAM_STR);
+        $listamaterias->bindParam(':semestre', $semestre, PDO::PARAM_STR);
+        $listamaterias->execute();
+        $resultados = $listamaterias->fetchAll(PDO::FETCH_ASSOC); // Convertir el resultado en un array asociativo
+        return $resultados;
     } catch (PDOException $e) {
-        echo "Error al obtener la formación de las materias: " . $e->getMessage();
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
+    }
+}
+
+
+//Funcion para obtener la clave de materia, esto lo ocupa la funcion insertarAsignacionMaterias de este mismo archivo (funciones.php) para pasar las materias de su nombre a su matricula,y asi poder insertar en la tabla de alum-mat 
+function obtenerClaveMateria($nombreMateria) {
+    $conexion = conectarDB();
+
+    try {
+        $stmt = $conexion->prepare("SELECT Clave FROM materias WHERE Nombre = :nombre");
+        $stmt->bindParam(':nombre', $nombreMateria);
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($resultado) {
+            return $resultado['Clave'];
+        } else {
+            return null; // La materia no fue encontrada
+        }
+    } catch (PDOException $e) {
+        echo "Error al obtener la clave de la materia: " . $e->getMessage();
         return null;
     }
 }
+//Funcion ocupada para asignar materias a alos alumnos ocupada aen AsignarMaterias.php
+function insertarAsignacionMaterias($matriculalumno,$carrera,$semestre,$grupo, ...$materias) {
+    $conexion = conectarDB();
+    $totalMaterias = 0;
+    $materiasInsertadas = 0;
 
+    // Recorrer las materias seleccionadas y obtener su clave
+    foreach ($materias as $materia) {
+        if (!empty($materia)) {
+            $totalMaterias++;
+            $claveMateria = obtenerClaveMateria($materia);
 
+            if ($claveMateria) {
+                try {
+                    // Insertar la asignación de materia en la tabla
+                    $stmt = $conexion->prepare("INSERT INTO alum_mat (matricula_alumno, clave_materia) VALUES (:matricula, :clave)");
+                    $stmt->bindParam(':matricula', $matriculalumno);
+                    $stmt->bindParam(':clave', $claveMateria);
+                    $stmt->execute();
+                    $materiasInsertadas++;
 
-
-// Función para obtener las materias asociadas a un profesor con información de la formación
-function obtenerMateriasAsociadas($numEmp) {
-    try {
-        $conexion = conectarDB();
-
-        $stmt = $conexion->prepare("SELECT pm.Id, m.Nombre AS Materia, f.Nombre AS Formacion, pm.Ciclo_Escolar 
-                                    FROM prof_mat pm 
-                                    JOIN materias m ON pm.Clave_Materia = m.Clave 
-                                    JOIN formacion f ON m.ClaveFormacion = f.Clave 
-                                    WHERE pm.NumEmp = :numEmp");
-        $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $resultados;
-    } catch (PDOException $e) {
-        echo "Error al obtener las materias asociadas: " . $e->getMessage();
-        return false;
-    }
-}
-
-
-function eliminarMateriaProfesor($id) {
-    try {
-        $conexion = conectarDB();
-
-        $stmt = $conexion->prepare("DELETE FROM prof_mat WHERE Id = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        echo "Materia eliminada correctamente.";
-    } catch (PDOException $e) {
-        echo "Error al eliminar la materia del profesor: " . $e->getMessage();
-    }
-}
-
-function obtenerMateriasAsociadas2($numEmp) {
-    try {
-        $conexion = conectarDB();
-
-        $stmt = $conexion->prepare("SELECT pm.Id, m.Clave AS ClaveMateria, m.Nombre AS Materia, f.Nombre AS Formacion FROM prof_mat pm JOIN materias m ON pm.Clave_Materia = m.Clave JOIN formacion f ON m.ClaveFormacion = f.Clave WHERE pm.NumEmp = :numEmp");
-        $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $resultados;
-    } catch (PDOException $e) {
-        echo "Error al obtener las materias asociadas: " . $e->getMessage();
-        return false;
-    }
-}
-
-
-function obtenerAlumnosPorMateria($claveMateria) {
-    try {
-        $conexion = conectarDB();
-
-        $stmt = $conexion->prepare("SELECT alumnos.* FROM cursar JOIN alumnos ON cursar.Matricula_Alumno = alumnos.Matricula WHERE cursar.Clave_Materia = :claveMateria");
-        $stmt->bindParam(':claveMateria', $claveMateria, PDO::PARAM_STR);
-        $stmt->execute();
-
-        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $resultados;
-    } catch (PDOException $e) {
-        echo "Error al obtener los alumnos que cursan la materia: " . $e->getMessage();
-        return false;
-    }
-}
-
-/*function obtenerDetallesAlumnosPorMateria($claveMateria) {
-    try {
-        $conexion = conectarDB();
-
-        $stmt = $conexion->prepare("SELECT alumnos.*, cursar.Calificacion, cursar.Ciclo_Escolar FROM cursar JOIN alumnos ON cursar.Matricula_Alumno = alumnos.Matricula WHERE cursar.Clave_Materia = :claveMateria");
-        $stmt->bindParam(':claveMateria', $claveMateria, PDO::PARAM_STR);
-        $stmt->execute();
-
-        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $resultados;
-    } catch (PDOException $e) {
-        echo "Error al obtener los detalles de los alumnos que cursan la materia: " . $e->getMessage();
-        return false;
-    }
-}
-()
-
-*/
-
-function ingresarCalificaciones($calificaciones, $claveMateria) {
-    try {
-        $conexion = conectarDB();
-
-        // Iterar sobre las calificaciones recibidas y actualizar la base de datos
-        foreach ($calificaciones as $matricula => $calificacion) {
-            $stmt = $conexion->prepare("UPDATE cursar SET Calificacion = :calificacion WHERE Matricula_Alumno = :matricula AND Clave_Materia = :claveMateria");
-            $stmt->bindParam(':calificacion', $calificacion, PDO::PARAM_STR);
-            $stmt->bindParam(':matricula', $matricula, PDO::PARAM_INT);
-            $stmt->bindParam(':claveMateria', $claveMateria, PDO::PARAM_STR);
-            $stmt->execute();
+                } catch (PDOException $e) {
+                    echo "Error al insertar asignación de materia: " . $e->getMessage();
+                }
+            } else {
+                echo "No se pudo encontrar la clave de la materia: $materia <br>";
+            }
         }
+    }
 
-        return true;
-    } catch (PDOException $e) {
-        echo "Error al actualizar las calificaciones: " . $e->getMessage();
-        return false;
+    if ($materiasInsertadas == $totalMaterias) {
+        echo "<script type='text/javascript'>alert('Las Materias Han Sido Asignadas.'); setTimeout(function(){window.location.href='ListaAlumnos.php?semestre=' + encodeURIComponent('$semestre') + '&carrera=' + encodeURIComponent('$carrera') + '&grupo=' + encodeURIComponent('$grupo');}, 100);</script>";
     }
 }
 
-//
+//Esta Funcion se ocupa para ver si tal alumno ya tiene materias asignadas, si es asi, en la tabla de ListaAlumnos.php se da el mensaje que a ese alumno ya se le asigno materias 
+function alumnoTieneMateriasAsignadas($matriculaAlumno) {
+    $conexion = conectarDB();
 
-
-function obtenerDetallesAlumnosPorMateria($claveMateria) {
     try {
-        $conexion = conectarDB();
-
-        // Obtener el ciclo activo
-        $stmtCiclo = $conexion->query("SELECT Ciclo_Activo FROM ciclo_activo");
-        $cicloActivo = $stmtCiclo->fetch(PDO::FETCH_ASSOC)['Ciclo_Activo'];
-
-        // Consulta para obtener los detalles de los alumnos que cursan la materia en el ciclo activo
-        $stmt = $conexion->prepare("SELECT alumnos.*, cursar.Calificacion, cursar.Ciclo_Escolar FROM cursar JOIN alumnos ON cursar.Matricula_Alumno = alumnos.Matricula WHERE cursar.Clave_Materia = :claveMateria AND cursar.Ciclo_Escolar = :cicloActivo");
-        $stmt->bindParam(':claveMateria', $claveMateria, PDO::PARAM_STR);
-        $stmt->bindParam(':cicloActivo', $cicloActivo, PDO::PARAM_STR);
+        $stmt = $conexion->prepare("SELECT COUNT(*) as count FROM alum_mat WHERE Matricula_Alumno = :matricula");
+        $stmt->bindParam(':matricula', $matriculaAlumno);
         $stmt->execute();
 
-        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $resultados;
+        return $result['count'] > 0; // Retorna true si tiene materias asignadas, false si no
     } catch (PDOException $e) {
-        echo "Error al obtener los detalles de los alumnos que cursan la materia: " . $e->getMessage();
+        echo "Error al consultar materias asignadas: " . $e->getMessage();
         return false;
     }
 }
 
 
-
-function aumentarSemestreAlumnos() {
+//Funcion que devuelve las materias que le han sido asignadas a los estudiantes este se ocupa en actualizarAsignacionMaterias.php
+function  ObtenerMateriasAsignadas($matriculalumno) {
+    $conexion = conectarDB();
     try {
-        // Establecer conexión a la base de datos
-        $conexion = conectarDB();
-
-        // Consulta para actualizar el semestre de los alumnos
-        $stmt = $conexion->prepare("UPDATE alumnos SET Semestre = Semestre + 1");
-
+        // Consulta SQL
+        $sql = "SELECT a.Id, a.Clave_Materia,m.Nombre AS nombremateria
+        FROM materias m
+        JOIN alum_mat a ON m.Clave = a.Clave_Materia
+        WHERE a.Matricula_Alumno = :matricula";
+        // Preparar la declaración
+        $statement = $conexion->prepare($sql);
+        // Asociar valores a los marcadores de posición
+        $statement->bindParam(':matricula', $matriculalumno, PDO::PARAM_STR);
         // Ejecutar la consulta
-        $stmt->execute();
-
-        // Verificar si se actualizaron los registros correctamente
-        $numFilasActualizadas = $stmt->rowCount();
-        if ($numFilasActualizadas > 0) {
-            echo "Se ha aumentado el semestre en uno para $numFilasActualizadas registros.";
-        } else {
-            echo "No se encontraron registros para actualizar.";
-        }
-
+        $statement->execute();
+        // Obtener los resultados
+        $registros = $statement->fetchAll();
+        return $registros;
     } catch (PDOException $e) {
-        echo "Error al aumentar el semestre de los alumnos: " . $e->getMessage();
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
     }
 }
 
+
+function ObtenerMateriasFaltantes2($carrera,$semestre) {
+    $conexion = conectarDB();
+
+    try {
+        $listamaterias = $conexion->prepare("SELECT * FROM materias WHERE Semestre <= :semestre AND ClaveFormacion = :formacion;");
+        $listamaterias->bindParam(':formacion', $carrera, PDO::PARAM_STR);
+        $listamaterias->bindParam(':semestre', $semestre, PDO::PARAM_STR);
+        $listamaterias->execute();
+        $resultados = $listamaterias->fetchAll(PDO::FETCH_ASSOC); // Convertir el resultado en un array asociativo
+        return $resultados;
+
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
+    }
+}
+
+
+
+function ObtMateriasCorrAsig($carrera, $semestre, $matriculalumno) {
+    // Obtener las materias asignadas al alumno
+    $materiasAsignadas = ObtenerMateriasAsignadas($matriculalumno);
+
+    // Obtener todas las materias disponibles
+    $materiasDisponibles = ObtenerMateriasFaltantes2($carrera, $semestre);
+
+    // Filtrar las materias disponibles para omitir las asignadas al alumno
+    $materiasFaltantes = array_filter($materiasDisponibles, function($materia) use ($materiasAsignadas) {
+        foreach ($materiasAsignadas as $asignada) {
+            if ($materia['Clave'] === $asignada['Clave_Materia']) {
+                return false; // Omitir esta materia porque ya está asignada al alumno
+            }
+        }
+        return true; // Incluir esta materia porque no está asignada al alumno
+    });
+
+    return $materiasFaltantes;
+}
+
+function eliminarasignacionWhereMatricula($idasiganada) {
+    $conexion = conectarDB();
+
+    try {
+        $sql = "DELETE FROM alum_mat WHERE Id = :idasignacion";
+		$sql = $conexion->prepare($sql);
+		$sql -> bindParam(':idasignacion', $idasiganada,PDO::PARAM_STR);
+		$qryExecute = $sql->execute();
+		if($qryExecute){
+            header("refresh:1;url=PanelAlumnos.php");
+            exit("Operación exitosa. Redirigiendo en 1 segundo...");
+		}
+		else{
+            header("refresh:3;url=PanelAlumnos.php");
+            exit("Ha ocurrido un error. Redirigiendo en tres segundos...");
+        }
+        return $registros;
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
+    }
+}
+
+
+function obtenerNombreApellido($numEmp) {
+    $conexion = conectarDB();
+
+    try {
+        $consulta = $conexion->prepare("SELECT Nombre, Apellidos FROM profesores WHERE NumEmp = :numEmp");
+        $consulta->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
+        $consulta->execute();
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+        return $resultado ? $resultado['Nombre'] . ' ' . $resultado['Apellidos'] : '';
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return '';
+    } finally {
+        $conexion = null;
+    }
+}
+
+
+
+function baja($MatriculaTem, $MatriculaDef) {
+    $conexion = conectarDB();
+
+    try {
+        $estatustem = "Baja Temporal";
+        $estatusdef = "Baja Definitiva";
+        if ($MatriculaTem == 0) { // AQUÍ ES PARA BAJA DEFINITIVA
+            $sql = "UPDATE alumnos SET Estatus = :estatus WHERE Matricula = :Matricula";
+            $sql = $conexion->prepare($sql);
+            $sql->bindParam(':Matricula', $MatriculaDef, PDO::PARAM_STR);
+            $sql->bindParam(':estatus', $estatusdef, PDO::PARAM_STR);
+            $qryExecute = $sql->execute();
+        } else { // AQUÍ PARA BAJA TEMPORAL
+            $sql = "UPDATE alumnos SET Estatus = :estatus WHERE Matricula = :Matricula";
+            $sql = $conexion->prepare($sql);
+            $sql->bindParam(':Matricula', $MatriculaTem, PDO::PARAM_STR);
+            $sql->bindParam(':estatus', $estatustem, PDO::PARAM_STR);
+            $qryExecute = $sql->execute();
+        }
+        
+        if ($qryExecute) {
+            header("refresh:1;url=PanelAlumnos.php");
+            return "Operación exitosa. Redirigiendo en 1 segundo...";
+        } else {
+            header("refresh:1;url=PanelAlumnos.php");
+            return "Ha ocurrido un error. Redirigiendo en un segundo...";
+        }
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
+    }
+}
+
+function  obtenerCarreraid($carrera) {
+    $conexion = conectarDB();
+
+    try {
+        $consulta = $conexion->prepare("SELECT Nombre FROM formacion WHERE Clave = :carrera");
+        $consulta->bindParam(':carrera', $carrera, PDO::PARAM_INT);
+        $consulta->execute();
+        return $consulta->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return null;
+    } finally {
+        $conexion = null;
+    }
+}
+
+
+
+function obteneralumnosxcarreraEstTem($carrera) {
+    $conexion = conectarDB();
+    try {
+        $estatus = "Baja Temporal";
+        // Consulta SQL
+        $sql = "select *from alumnos where formacion = :carrera and Estatus = :sts  ";
+        $statement = $conexion->prepare($sql);
+        // Asociar valores a los marcadores de posición
+        $statement->bindParam(':carrera', $carrera, PDO::PARAM_STR);
+        $statement->bindParam(':sts', $estatus, PDO::PARAM_STR);
+        // Ejecutar la consulta
+        $statement->execute();
+        // Obtener los resultados
+        $registros = $statement->fetchAll();
+        
+
+        return $registros;
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
+    }
+}
+
+function obteneralumnosxcarreraEstPer($carrera) {
+    $conexion = conectarDB();
+    try {
+        $estatus = "Baja Definitiva";
+        // Consulta SQL
+        $sql = "select *from alumnos where formacion = :carrera and Estatus = :sts  ";
+        $statement = $conexion->prepare($sql);
+        // Asociar valores a los marcadores de posición
+        $statement->bindParam(':carrera', $carrera, PDO::PARAM_STR);
+        $statement->bindParam(':sts', $estatus, PDO::PARAM_STR);
+        // Ejecutar la consulta
+        $statement->execute();
+        // Obtener los resultados
+        $registros = $statement->fetchAll();
+        
+
+        return $registros;
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
+    }
+}
+
+
+function alta($Matricula) {
+    $conexion = conectarDB();
+
+    try {
+        $estatus = "Activo";
+
+            $sql = "UPDATE alumnos SET Estatus = :estatus WHERE Matricula = :Matricula";
+            $sql = $conexion->prepare($sql);
+            $sql->bindParam(':Matricula', $Matricula, PDO::PARAM_STR);
+            $sql->bindParam(':estatus', $estatus, PDO::PARAM_STR);
+            $qryExecute = $sql->execute();
+        
+        
+        if ($qryExecute) {
+            header("refresh:1;url=PanelAlumnos.php");
+            return "Operación exitosa. Redirigiendo en 1 segundo...";
+        } else {
+            header("refresh:3;url=PanelAlumnos.php");
+            return "Ha ocurrido un error. Redirigiendo en tres segundos...";
+        }
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
+    }
+}
+
+function obtenerNombreProfesor2($numEmp) {
+    $conexion = conectarDB();
+
+    try {
+        $consulta = $conexion->prepare("SELECT Nombre, Apellidos FROM profesores WHERE NumEmp = :numEmp");
+        $consulta->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
+        $consulta->execute();
+
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+
+        if ($resultado) {
+            return $resultado;  // Cambiado a return $resultado en lugar de return $resultado->fetchAll(PDO::FETCH_ASSOC)
+        } else {
+            return "Nombre no encontrado";
+        }
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cierra la conexión en el bloque finally
+        $conexion = null;
+    }
+}
+
+function obtenerformaciond() {
+    try {
+        
+
+        $conexion = conectarDB(); // Conecta a la base de datos
+        $consulta = $conexion->query("SELECT Clave, Nombre FROM formacion"); // Consulta las carreras
+        while ($row = $consulta->fetch(PDO::FETCH_ASSOC)) {
+            echo "<option value='{$row['Clave']}'>{$row['Nombre']}</option>";
+        }
+    } catch (PDOException $e) {
+        echo "Error de conexión: " . $e->getMessage();
+    }
+    
+}
+
+function obtener_grados_grupos() {
+// Obtener la carrera seleccionada desde la solicitud GET
+$carreraSeleccionada = $_GET['carrera'];
+
+// Realizar la consulta en la base de datos para obtener los semestres y grupos de la carrera seleccionada
+try {
+    
+    $conexion = conectarDB();
+
+    $consulta = $conexion->prepare("SELECT DISTINCT a.Semestre, a.Grupo FROM alumnos a INNER JOIN cursar c ON a.Matricula = c.Matricula_Alumno INNER JOIN materias m ON c.Clave_Materia = m.Clave INNER JOIN formacion f ON m.ClaveFormacion = f.Clave WHERE f.Clave = :carrera");
+    $consulta->bindParam(':carrera', $carreraSeleccionada, PDO::PARAM_STR);
+    $consulta->execute();
+
+    $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+    // Crear un array asociativo con los semestres y grupos
+    $datos = array(
+        'semestres' => array(),
+        'grupos' => array()
+    );
+
+    foreach ($resultados as $row) {
+        // Verificar si el semestre ya se ha agregado al array
+        if (!in_array($row['Semestre'], $datos['semestres'])) {
+            $datos['semestres'][] = $row['Semestre'];
+        }
+
+        // Verificar si el grupo ya se ha agregado al array
+        if (!in_array($row['Grupo'], $datos['grupos'])) {
+            $datos['grupos'][] = $row['Grupo'];
+        }
+    }
+
+    // Devolver los datos en formato JSON
+    echo json_encode($datos);
+} catch (PDOException $e) {
+    echo "Error de conexión: " . $e->getMessage();
+}  
+}
 
 ?>
 
