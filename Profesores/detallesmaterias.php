@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
     exit();
 }
 
-include 'funciones.php';
+include('../funciones.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar si se han recibido los datos esperados

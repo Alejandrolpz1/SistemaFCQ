@@ -19,7 +19,7 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
 // Actualizar la marca de tiempo de la última actividad
 $_SESSION['last_activity'] = time();
 
-include 'funciones.php';
+include('../funciones.php');
 
 // Obtener el número de empleado del profesor que ha iniciado sesión
 $numEmpProfesor = $_SESSION['user_id'];

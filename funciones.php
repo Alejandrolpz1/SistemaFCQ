@@ -2111,8 +2111,19 @@ function obtenerMateriasAsociadas2($numEmp) {
     try {
         $conexion = conectarDB();
 
-        $stmt = $conexion->prepare("SELECT pm.Id, m.Clave AS ClaveMateria, m.Nombre AS Materia, f.Nombre AS Formacion FROM prof_mat pm JOIN materias m ON pm.Clave_Materia = m.Clave JOIN formacion f ON m.ClaveFormacion = f.Clave WHERE pm.NumEmp = :numEmp");
+        // Almacenar el ciclo escolar activo en una variable
+        $cicloActivo = obtenerCicloEscolarActivo();
+
+        $stmt = $conexion->prepare("SELECT pm.Id, m.Clave AS ClaveMateria, m.Nombre AS Materia, f.Nombre AS Formacion 
+                                    FROM prof_mat pm 
+                                    JOIN materias m ON pm.Clave_Materia = m.Clave 
+                                    JOIN formacion f ON m.ClaveFormacion = f.Clave 
+                                    JOIN ciclo_activo ca ON pm.Ciclo_Escolar = ca.Ciclo_Activo
+                                    WHERE pm.NumEmp = :numEmp AND ca.Ciclo_Activo = :cicloActivo");
+
         $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
+        // Pasar la variable $cicloActivo por referencia
+        $stmt->bindParam(':cicloActivo', $cicloActivo, PDO::PARAM_STR);
         $stmt->execute();
 
         $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -2124,6 +2135,22 @@ function obtenerMateriasAsociadas2($numEmp) {
     }
 }
 
+
+function obtenerCicloEscolarActivo() {
+    try {
+        $conexion = conectarDB();
+
+        $stmt = $conexion->prepare("SELECT Ciclo_Activo FROM ciclo_activo LIMIT 1");
+        $stmt->execute();
+
+        $cicloActivo = $stmt->fetchColumn();
+
+        return $cicloActivo;
+    } catch (PDOException $e) {
+        echo "Error al obtener el ciclo escolar activo: " . $e->getMessage();
+        return false;
+    }
+}
 
 function obtenerAlumnosPorMateria($claveMateria) {
     try {

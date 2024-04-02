@@ -1,5 +1,5 @@
 <?php
-include('funciones.php');
+include('../funciones.php');
 session_start(); // Inicia la sesión al principio del script
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
