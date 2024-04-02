@@ -21,6 +21,7 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
 // Actualizar el tiempo de actividad
 $_SESSION['last_activity'] = time();
 include('../funciones.php');
+
 // Verificar si se seleccionó una secretaria para editar
 if (isset($_GET['numEmp'])) {
     $numEmp = $_GET['numEmp'];
@@ -38,7 +39,8 @@ if (isset($_GET['numEmp'])) {
         $numEmp = $_POST['numEmp'];
         $nombre = $_POST['nombre'];
         $apellido = $_POST['apellido'];
-        $password = $_POST['password'];
+        $plaintext_password = $_POST['password'];
+        $password = password_hash($plaintext_password, PASSWORD_DEFAULT); // Hashear la contraseña
 
         // Llamar a la función para editar secretaria
         $resultado = editarSecretaria($numEmp, $nombre, $apellido, $password);
@@ -82,11 +84,11 @@ if (isset($_GET['numEmp'])) {
             <input type="text" name="apellido" value="<?php echo $secretaria['Apellido']; ?>" required><br>
 
             <label for="password">Contraseña:</label>
-            <input type="password" name="password" value="<?php echo $secretaria['Password']; ?>" required><br>
+            <input type="password" name="password" value="" required><br>
 
             <input type="submit" value="Guardar Cambios">
             <!-- Botón de cancelar para regresar a la lista de secretarias -->
-            <a href="IndexAdmin.php" style="margin-left: 10px;">Cancelar?</a>
+            <a href="IndexAdmin.php" style="margin-left: 10px;">Cancelar</a>
         </form>
     <?php else : ?>
         <!-- Mostrar lista de secretarias si no se ha seleccionado una para editar -->

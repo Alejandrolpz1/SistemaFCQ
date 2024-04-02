@@ -28,7 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $numEmp = $_POST['numEmp'];
     $nombre = $_POST['nombre'];
     $apellido = $_POST['apellido'];
-    $password = $_POST['password'];
+    $plaintext_password = $_POST['password'];
+    $password = password_hash($plaintext_password, PASSWORD_DEFAULT); // Hashear la contraseña
 
     // Llamar a la función para agregar secretaria
     $resultado = agregarSecretaria($numEmp, $nombre, $apellido, $password);

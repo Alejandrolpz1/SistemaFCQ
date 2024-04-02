@@ -40,7 +40,8 @@ if (isset($_GET['id'])) {
         $apellido = $_POST['apellido'];
         $cargo = $_POST['cargo'];
         $usuario = $_POST['usuario'];
-        $password = $_POST['password']; // Contraseña en texto plano
+        $plaintext_password = $_POST['password']; // Contraseña en texto plano
+        $password = password_hash($plaintext_password, PASSWORD_DEFAULT); // Hashear la contraseña
 
         // Llamar a la función para editar administrador
         $resultado = editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password);
@@ -127,3 +128,4 @@ if (isset($_GET['id'])) {
 
 </body>
 </html>
+

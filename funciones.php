@@ -515,7 +515,11 @@ function editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password) {
         $consulta->bindParam(':apellido', $apellido, PDO::PARAM_STR);
         $consulta->bindParam(':cargo', $cargo, PDO::PARAM_STR);
         $consulta->bindParam(':usuario', $usuario, PDO::PARAM_STR);
-        $consulta->bindParam(':password', $password, PDO::PARAM_STR);
+
+        // Hash de la contraseña
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $consulta->bindParam(':password', $passwordHash, PDO::PARAM_STR);
+
         $consulta->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $consulta->execute();
@@ -2323,14 +2327,13 @@ function obtenerCicloEscolarPorId($idCiclo) {
 
 
 
-
 function aumentarSemestreAlumnos() {
     try {
         // Establecer conexión a la base de datos
         $conexion = conectarDB();
 
-        // Consulta para actualizar el semestre de los alumnos
-        $stmt = $conexion->prepare("UPDATE alumnos SET Semestre = Semestre + 1");
+        // Consulta para actualizar el semestre solo en los registros con Semestre <= 12 y Estatus "Activo"
+        $stmt = $conexion->prepare("UPDATE alumnos SET Semestre = Semestre + 1 WHERE Semestre <= 12 AND Estatus = 'Activo'");
 
         // Ejecutar la consulta
         $stmt->execute();
@@ -2338,19 +2341,15 @@ function aumentarSemestreAlumnos() {
         // Verificar si se actualizaron los registros correctamente
         $numFilasActualizadas = $stmt->rowCount();
         if ($numFilasActualizadas > 0) {
-            echo "Se ha aumentado el semestre en uno para $numFilasActualizadas registros.";
+            echo "Se ha aumentado el semestre en uno para $numFilasActualizadas registros con estatus 'Activo'.";
         } else {
-            echo "No se encontraron registros para actualizar.";
+            echo "No se encontraron registros con semestre menor o igual a 12 y estatus 'Activo' para actualizar.";
         }
 
     } catch (PDOException $e) {
         echo "Error al aumentar el semestre de los alumnos: " . $e->getMessage();
     }
 }
-
-
-
-
 
 
 
