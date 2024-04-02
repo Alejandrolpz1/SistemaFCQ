@@ -20,8 +20,7 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
 
 // Actualizar el tiempo de actividad
 $_SESSION['last_activity'] = time();
-include 'funciones.php';
-
+include('../funciones.php');
 // Verificar si se seleccionó una secretaria para editar
 if (isset($_GET['numEmp'])) {
     $numEmp = $_GET['numEmp'];

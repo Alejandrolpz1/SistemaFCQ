@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include 'funciones.php';
+include('../funciones.php');
 
 // Verificar la sesión del administrador
 if (!isset($_SESSION['admin_usuario']) || empty($_SESSION['admin_usuario'])) {

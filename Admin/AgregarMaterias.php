@@ -24,7 +24,7 @@ if (!isset($_SESSION['admin_usuario']) || empty($_SESSION['admin_usuario'])) {
             <!-- Aquí se cargarán dinámicamente las formaciones desde PHP -->
             <?php
             // Incluir el archivo de funciones
-            include 'funciones.php';
+            include('../funciones.php');
 
             // Obtener la lista de formaciones
             $formaciones = obtenerListaFormaciones();

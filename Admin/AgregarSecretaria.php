@@ -20,7 +20,7 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
 
 // Actualizar el tiempo de actividad
 $_SESSION['last_activity'] = time();
-include 'funciones.php';
+include('../funciones.php');
 
 // Verificar si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
