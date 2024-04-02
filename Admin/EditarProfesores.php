@@ -18,7 +18,7 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
 
 // Actualizar el tiempo de actividad
 $_SESSION['last_activity'] = time();
-include 'funciones.php';
+include('../funciones.php');
 
 // Verificar si se seleccionó un profesor para editar
 if (isset($_GET['numEmp'])) {

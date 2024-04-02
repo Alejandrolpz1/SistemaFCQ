@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
     exit();
 }
 
-include 'funciones.php';
+include('../funciones.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar si se han recibido los datos esperados
@@ -19,6 +19,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Obtener y mostrar los detalles de los alumnos que cursan esta materia
         $alumnosDetalles = obtenerDetallesAlumnosPorMateria($claveMateria);
         $grupos = array(); // Array para almacenar los grupos únicos
+        echo"<nav>
+            <ul>
+                <li><a href='IndexProfesores.php'><img src='../iconos//homelogo.png' width='20px'><br>Home</a></li>
+                <li><a href='IndexProfesores.php'><img src='../iconos//back.png' width='20px'><br>Cerrar sesión</a></li>
+            </ul>
+            <h1 id='tituloLaboratorio'><img src='../iconos/logoFCQ.png' width='80'> Sistema de Control Escolar FCQ</h1>
+        </nav>";
+
+
         if ($alumnosDetalles) {
             echo "<h2>Detalles de la materia</h2>";
             echo "<p>Nombre de la materia: $nombreMateria</p>";
@@ -69,6 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles de Materias</title>
+    <link rel="stylesheet" href="../css/csssecretaria.css">
     <script>
     function filtrarAlumnos() {
         var grupoSelect = document.getElementById("grupoSelect");
@@ -87,6 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </script>
 </head>
 <body>
+
     <a href="IndexProfesores.php">Volver a la página principal</a>
 </body>
 </html>

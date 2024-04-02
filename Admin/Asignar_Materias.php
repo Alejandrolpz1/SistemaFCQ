@@ -7,8 +7,7 @@ if (!isset($_SESSION['admin_usuario']) || empty($_SESSION['admin_usuario'])) {
     header("Location: LoginAdmin.php");
     exit();
 }
-
-include 'funciones.php';
+include('../funciones.php');
 // Verificar si se ha enviado el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Obtener el ID de la formación seleccionada
