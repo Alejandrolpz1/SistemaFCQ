@@ -1150,6 +1150,10 @@ function generarPDFCalificacionesMateria($clave_materia, $ciclo_escolar, $semest
                 AND M.Clave = :clave_materia AND C.Ciclo_Escolar = :ciclo_escolar
             ORDER BY A.Apellido ASC;";
 
+    //Obtener nombre profesor
+    echo "$nombre_profesor";
+    $nombre_profesor = ObtenerProfesorMateria($clave_materia);
+
     $statement = $conexion->prepare($sql);
     $statement->bindParam(':semestre', $semestre, PDO::PARAM_STR);
     $statement->bindParam(':grupo', $grupo, PDO::PARAM_STR);
@@ -1169,12 +1173,12 @@ function generarPDFCalificacionesMateria($clave_materia, $ciclo_escolar, $semest
 
     $pdf->SetFont('Helvetica', '', 11);
     // Logo de la UABJO en el lado izquierdo superior
-    $pdf->Image('iconos/UBAJOLOGOCONFONDO.jpg', 10, 7, 20, '', 'JPG');
+    $pdf->Image('../iconos/UBAJOLOGOCONFONDO.jpg', 10, 7, 20, '', 'JPG');
     // Logo de la FCQ en el lado derecho superior
-    $pdf->Image('iconos/FCQLOGOCONFONDO.jpg', 180, 7, 20, '', 'JPG');
+    $pdf->Image('../iconos/FCQLOGOCONFONDO.jpg', 180, 7, 20, '', 'JPG');
     // Título de la Universidad en el centro
     $pdf->Cell(0, 10, "UNIVERSIDAD AUTÓNOMA \"BENITO JUÁREZ\" DE OAXACA", 0, 1, 'C');
-    $pdf->Image('iconos/Adorno.png', 45, 18, 120, '', 'PNG');
+    $pdf->Image('../iconos/Adorno.png', 45, 18, 120, '', 'PNG');
 
     // Subtítulo de la Facultad centrado y más pequeño
     $pdf->SetFont('Helvetica', 'B', 10);
@@ -1206,13 +1210,15 @@ function generarPDFCalificacionesMateria($clave_materia, $ciclo_escolar, $semest
         $pdf->Cell(40, 5, $fila['Calificacion'], 1);
         $pdf->Ln();
     }
-
+    
     // Espacios para firmas
     $pdf->Ln(20);
     $pdf->Cell(75, 5, " ", 0, 0);
     $pdf->Cell(80, 5, " ___________________________", 0, 1);
-    $pdf->Cell(95, 5, " ", 0, 0);
-    $pdf->Cell(80, 5, "Firma", 0, 1);
+    $pdf->Cell(75, 5, " ", 0, 0);
+    $pdf->Cell(80, 5, $nombre_profesor, 0, 1); // Mostrar el nombre del profesor
+
+
 
     // Obtener la fecha y hora actual
     date_default_timezone_set('America/Mexico_City'); // Establecer zona horaria a México
@@ -2347,7 +2353,21 @@ function aumentarSemestreAlumnos() {
         echo "Error al aumentar el semestre de los alumnos: " . $e->getMessage();
     }
 }
+//Ocupado para la funcion generarPDFCalificacionesMateria
+function ObtenerProfesorMateria($clave_materia) {
+    $conexion = conectarDB();
+    $sql = "SELECT p.Nombre, p.Apellidos FROM prof_mat pm 
+            JOIN profesores p ON pm.NumEmp = p.NumEmp 
+            JOIN materias m ON pm.Clave_Materia = m.Clave 
+            WHERE m.Clave = :clave_materia;";
 
+    $statement = $conexion->prepare($sql);
+    $statement->bindParam(':clave_materia', $clave_materia, PDO::PARAM_STR);
+    $statement->execute();
+    $resultado = $statement->fetch(PDO::FETCH_ASSOC);
+
+    return $resultado['Nombre'] . ' ' . $resultado['Apellidos'];
+}
 
 
 

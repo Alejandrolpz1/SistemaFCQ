@@ -105,6 +105,7 @@ $_SESSION['last_activity'] = time();
                     <td>Apellidos</td>
                     <td>Grupo</td>
                     <td>Semestre</td>
+                    <td>Eliminar</td>
                 </tr>
                 <?php
 
@@ -117,6 +118,10 @@ $_SESSION['last_activity'] = time();
                     echo "<td>" . htmlspecialchars($value["Apellido"]) . "</td>";
                     echo "<td>" . htmlspecialchars($value["Grupo"]) . "</td>";
                     echo "<td>" . htmlspecialchars($value["Semestre"]) . "</td>";
+                    echo "<td>";
+                    echo "<a href='ConfirmacionEliminarAlumno2.php?Matricula_Alumno=" . htmlspecialchars($value['Matricula']) . "&Semestre=" . htmlspecialchars($value['Semestre']) . "&Grupo=" . htmlspecialchars($value['Grupo']) ."&Carrera=" . htmlspecialchars($carrera) . "'>";
+                    echo "<img src='../iconos/eliminar.png' width='32' height='32'></a>";
+                    echo "</td>";
                     echo "</tr>";
                 }
                 ?>
