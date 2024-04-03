@@ -82,6 +82,17 @@ $_SESSION['last_activity'] = time();
         <div class="parte">ver Materias de profesores<br>
             <div class="parte2"><a href="materiasprofesores.php"><img src="../iconos/editprof.png" width="100"></a></div>
         </div>
+
+        <div class="parte">ver Contraseñas de Secretarias<br>
+            <div class="parte2"><a href="contraseñassecretarias.php"><img src="../iconos/editprof.png" width="100"></a></div>
+        </div>
+        <div class="parte">ver Contraseñas de Profesores<br>
+            <div class="parte2"><a href="contraseñaprofesores.php"><img src="../iconos/editprof.png" width="100"></a></div>
+        </div>
+        <div class="parte">ver Contraseñas de Administrador<br>
+            <div class="parte2"><a href="contraseñaadmins.php"><img src="../iconos/editprof.png" width="100"></a></div>
+        </div>
+        
     </div>
 </body>
 

@@ -2396,6 +2396,111 @@ function borrarDatosAlumMat() {
 
 
 
+
+// Función para obtener la contraseña de una secretaria específica
+function obtenerContraseñaSecretaria($numEmp) {
+    try {
+        // Establecer la conexión con la base de datos
+        $conexion = conectarDB();
+
+        // Preparar la consulta SQL para obtener la contraseña de la secretaria
+        $stmt = $conexion->prepare("SELECT Password FROM secretarias WHERE NumEmp = :numEmp");
+
+        // Vincular el parámetro :numEmp
+        $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener el resultado
+        $contraseña = $stmt->fetchColumn();
+
+        // Devolver la contraseña
+        return $contraseña;
+    } catch (PDOException $e) {
+        // Manejar errores de la base de datos
+        echo "Error al obtener la contraseña de la secretaria: " . $e->getMessage();
+        return false;
+    }
+}
+
+
+function obtenerNombreSecretaria($numEmp) {
+    try {
+        $conexion = conectarDB();
+        $query = "SELECT Nombre, Apellido FROM secretarias WHERE NumEmp = :numEmp";
+        $stmt = $conexion->prepare($query);
+        $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $nombre = $resultado['Nombre'] . ' ' . $resultado['Apellido'];
+        return $nombre;
+    } catch (PDOException $e) {
+        echo "Error al obtener el nombre de la secretaria: " . $e->getMessage();
+        return false;
+    }
+}
+
+
+
+
+function obtenerContraseñaProfesor($numEmp) {
+    try {
+        $conexion = conectarDB();
+
+        // Preparar la consulta SQL
+        $consulta = "SELECT Password FROM profesores WHERE NumEmp = :numEmp";
+
+        // Preparar la declaración
+        $stmt = $conexion->prepare($consulta);
+
+        // Bind de parámetros
+        $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener el resultado
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Devolver la contraseña si se encontró, o null si no se encontró
+        return $resultado ? $resultado['Password'] : null;
+    } catch (PDOException $e) {
+        // Manejar errores
+        echo "Error al obtener la contraseña del profesor: " . $e->getMessage();
+        return null;
+    }
+}
+
+
+function obtenerContraseñaAdmin($usuario) {
+    try {
+        $conexion = conectarDB();
+
+        // Preparar la consulta SQL
+        $consulta = "SELECT Password FROM admin WHERE Usuario = :usuario";
+
+        // Preparar la declaración
+        $stmt = $conexion->prepare($consulta);
+
+        // Bind de parámetros
+        $stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener el resultado
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Devolver la contraseña si se encontró, o null si no se encontró
+        return $resultado ? $resultado['Password'] : null;
+    } catch (PDOException $e) {
+        // Manejar errores
+        echo "Error al obtener la contraseña del administrador: " . $e->getMessage();
+        return null;
+    }
+}
 ?>
+
 
 
