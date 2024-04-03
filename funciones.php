@@ -2192,42 +2192,43 @@ function obtenerAlumnosPorMateria($claveMateria) {
 ()
 
 */
-
-function ingresarCalificaciones($calificaciones, $claveMateria) {
+function ingresarCalificaciones($data, $claveMateria) {
     try {
         $conexion = conectarDB();
 
-        // Iterar sobre las calificaciones recibidas y actualizar la base de datos
-        foreach ($calificaciones as $matricula => $calificacion) {
-            $stmt = $conexion->prepare("UPDATE cursar SET Calificacion = :calificacion WHERE Matricula_Alumno = :matricula AND Clave_Materia = :claveMateria");
-            $stmt->bindParam(':calificacion', $calificacion, PDO::PARAM_STR);
+        // Obtener el ciclo escolar activo
+        $stmtCiclo = $conexion->query("SELECT Ciclo_Activo FROM ciclo_activo");
+        $cicloActivo = $stmtCiclo->fetch(PDO::FETCH_ASSOC)['Ciclo_Activo'];
+
+        // Preparar la consulta de inserción
+        $stmt = $conexion->prepare("INSERT INTO cursar (Matricula_Alumno, Clave_Materia, Calificacion, Ciclo_Escolar) VALUES (:matricula, :claveMateria, :calificacion, :cicloActivo)");
+
+        // Iterar sobre las calificaciones recibidas y ejecutar la consulta de inserción
+        foreach ($data as $matricula => $calificacion) {
             $stmt->bindParam(':matricula', $matricula, PDO::PARAM_INT);
             $stmt->bindParam(':claveMateria', $claveMateria, PDO::PARAM_STR);
+            $stmt->bindParam(':calificacion', $calificacion, PDO::PARAM_STR);
+            $stmt->bindParam(':cicloActivo', $cicloActivo, PDO::PARAM_STR);
             $stmt->execute();
         }
 
         return true;
     } catch (PDOException $e) {
-        echo "Error al actualizar las calificaciones: " . $e->getMessage();
+        echo "Error al insertar las calificaciones: " . $e->getMessage();
         return false;
     }
 }
 
-//
 
+//
 
 function obtenerDetallesAlumnosPorMateria($claveMateria) {
     try {
         $conexion = conectarDB();
 
-        // Obtener el ciclo activo
-        $stmtCiclo = $conexion->query("SELECT Ciclo_Activo FROM ciclo_activo");
-        $cicloActivo = $stmtCiclo->fetch(PDO::FETCH_ASSOC)['Ciclo_Activo'];
-
-        // Consulta para obtener los detalles de los alumnos que cursan la materia en el ciclo activo
-        $stmt = $conexion->prepare("SELECT alumnos.*, cursar.Calificacion, cursar.Ciclo_Escolar FROM cursar JOIN alumnos ON cursar.Matricula_Alumno = alumnos.Matricula WHERE cursar.Clave_Materia = :claveMateria AND cursar.Ciclo_Escolar = :cicloActivo");
+        // Consulta para obtener los detalles de los alumnos que cursan la materia
+        $stmt = $conexion->prepare("SELECT alumnos.* FROM alumnos JOIN alum_mat ON alumnos.Matricula = alum_mat.Matricula_Alumno WHERE alum_mat.Clave_Materia = :claveMateria");
         $stmt->bindParam(':claveMateria', $claveMateria, PDO::PARAM_STR);
-        $stmt->bindParam(':cicloActivo', $cicloActivo, PDO::PARAM_STR);
         $stmt->execute();
 
         $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -2238,8 +2239,6 @@ function obtenerDetallesAlumnosPorMateria($claveMateria) {
         return false;
     }
 }
-
-
 
 
 
@@ -2354,6 +2353,26 @@ function aumentarSemestreAlumnos() {
 
 
 
+//// alumnos 
+
+function borrarDatosAlumMat() {
+    try {
+        $conexion = conectarDB();
+
+        // Preparar la consulta para borrar todos los datos de la tabla
+        $stmt = $conexion->prepare("DELETE FROM alum_mat");
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Devolver verdadero si se ejecutó correctamente
+        return true;
+    } catch (PDOException $e) {
+        // Capturar y mostrar cualquier error en caso de que ocurra
+        echo "Error al borrar los datos de la tabla alum_mat: " . $e->getMessage();
+        return false;
+    }
+}
 
 
 

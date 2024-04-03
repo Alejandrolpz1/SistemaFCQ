@@ -51,9 +51,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "<tr class='grupo{$alumno['Grupo']}'>"; // Agregar clase con el grupo para filtrar
                 echo "<td>{$alumno['Nombre']} {$alumno['Apellido']}</td>";
                 echo "<td>{$alumno['Matricula']}</td>";
-                echo "<td><input type='number' name='calificaciones[{$alumno['Matricula']}]' value='{$alumno['Calificacion']}' step='0.1'></td>";
+                echo "<td><input type='number' name='calificaciones[{$alumno['Matricula']}]' value='" . (isset($alumno['Calificacion']) ? $alumno['Calificacion'] : '') . "' step='0.1'></td>";
+                // Agregar un campo oculto para la matrícula del alumno
+                echo "<input type='hidden' name='matriculas[]' value='{$alumno['Matricula']}'>";
                 echo "</tr>";
             }
+            
             echo "</table>";
             echo "<input type='submit' name='guardar' value='Guardar'>"; // Agregar un atributo 'name' al botón 'Guardar'
             echo "</form>";
@@ -71,7 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -97,7 +99,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </script>
 </head>
 <body>
-
     <a href="IndexProfesores.php">Volver a la página principal</a>
 </body>
 </html>

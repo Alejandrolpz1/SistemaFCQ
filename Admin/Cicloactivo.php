@@ -24,7 +24,6 @@ include('../funciones.php');
 // Definir una variable para el mensaje de éxito
 $mensaje_exito = "";
 
-// Verificar si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Obtener el ciclo escolar seleccionado
     $ciclo_escolar = $_POST['ciclo_escolar'];
@@ -44,6 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mensaje_exito = "Ciclo escolar actualizado correctamente.";
             // Redirigir después de 3 segundos a la página principal
             echo '<meta http-equiv="refresh" content="3;url=indexAdmin.php">';
+
+            // Llamar a la función para borrar los datos de alum_mat
+            borrarDatosAlumMat();
         } else {
             $mensaje = "Error al agregar ciclo escolar activo.";
         }
