@@ -80,3 +80,30 @@ $administradores = obtenerListaAdmins();
 </body>
 </html>
 
+</head>
+<body>
+    <h2>Contraseñas Administradores</h2>
+    
+    <?php if (isset($mensaje_error)) : ?>
+        <p><?php echo $mensaje_error; ?></p>
+    <?php endif; ?>
+
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+        <label for="usuario">Seleccionar Administrador:</label>
+        <select name="usuario" required>
+            <?php foreach ($administradores as $admin) : ?>
+                <option value="<?php echo $admin['Usuario']; ?>"><?php echo $admin['Nombre'] . ' ' . $admin['Apellido']; ?></option>
+            <?php endforeach; ?>
+        </select>
+        <input type="submit" value="Ver Contraseña">
+    </form>
+
+    <?php if (isset($contraseña)) : ?>
+        <h3>Contraseña de <?php echo $usuario; ?>:</h3>
+        <p><?php echo $contraseña; ?></p>
+    <?php endif; ?>
+
+    <a href="IndexAdmin.php">Cancelar</a>
+</body>
+</html>
+

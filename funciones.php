@@ -2338,7 +2338,11 @@ function aumentarSemestreAlumnos() {
         $conexion = conectarDB();
 
         // Consulta para actualizar el semestre solo en los registros con Semestre <= 12 y Estatus "Activo"
+
         $stmt = $conexion->prepare("UPDATE alumnos SET Semestre = Semestre + 1 WHERE Semestre <= 12 AND Estatus = 'Activo'");
+
+        $stmt = $conexion->prepare("UPDATE alumnos SET Semestre = Semestre + 1 WHERE Semestre <= 13 AND Estatus = 'Activo'");
+
 
         // Ejecutar la consulta
         $stmt->execute();
@@ -2348,7 +2352,12 @@ function aumentarSemestreAlumnos() {
         if ($numFilasActualizadas > 0) {
             echo "Se ha aumentado el semestre en uno para $numFilasActualizadas registros con estatus 'Activo'.";
         } else {
+
             echo "No se encontraron registros con semestre menor o igual a 12 y estatus 'Activo' para actualizar.";
+
+            echo "No se encontraron registros con semestre menor o igual a 13 y estatus 'Activo' para actualizar.";
+
+          
         }
 
     } catch (PDOException $e) {
@@ -2411,6 +2420,174 @@ function obtenerContraseñaSecretaria($numEmp) {
 
         // Ejecutar la consulta
         $stmt->execute();
+
+// Función para obtener la contraseña de una secretaria específica
+function obtenerContraseñaSecretaria($numEmp) {
+    try {
+        // Establecer la conexión con la base de datos
+        $conexion = conectarDB();
+
+        // Preparar la consulta SQL para obtener la contraseña de la secretaria
+        $stmt = $conexion->prepare("SELECT Password FROM secretarias WHERE NumEmp = :numEmp");
+
+        // Vincular el parámetro :numEmp
+        $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener el resultado
+        $contraseña = $stmt->fetchColumn();
+
+        // Devolver la contraseña
+        return $contraseña;
+    } catch (PDOException $e) {
+        // Manejar errores de la base de datos
+        echo "Error al obtener la contraseña de la secretaria: " . $e->getMessage();
+        return false;
+    }
+}
+
+
+function obtenerNombreSecretaria($numEmp) {
+    try {
+        $conexion = conectarDB();
+        $query = "SELECT Nombre, Apellido FROM secretarias WHERE NumEmp = :numEmp";
+        $stmt = $conexion->prepare($query);
+        $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $nombre = $resultado['Nombre'] . ' ' . $resultado['Apellido'];
+        return $nombre;
+    } catch (PDOException $e) {
+        echo "Error al obtener el nombre de la secretaria: " . $e->getMessage();
+        return false;
+    }
+}
+
+
+
+
+function obtenerContraseñaProfesor($numEmp) {
+    try {
+        $conexion = conectarDB();
+
+        // Preparar la consulta SQL
+        $consulta = "SELECT Password FROM profesores WHERE NumEmp = :numEmp";
+
+        // Preparar la declaración
+        $stmt = $conexion->prepare($consulta);
+
+        // Bind de parámetros
+        $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener el resultado
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Devolver la contraseña si se encontró, o null si no se encontró
+        return $resultado ? $resultado['Password'] : null;
+    } catch (PDOException $e) {
+        // Manejar errores
+        echo "Error al obtener la contraseña del profesor: " . $e->getMessage();
+        return null;
+    }
+}
+
+
+function obtenerContraseñaAdmin($usuario) {
+    try {
+        $conexion = conectarDB();
+
+        // Preparar la consulta SQL
+        $consulta = "SELECT Password FROM admin WHERE Usuario = :usuario";
+
+        // Preparar la declaración
+        $stmt = $conexion->prepare($consulta);
+
+        // Bind de parámetros
+        $stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener el resultado
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Devolver la contraseña si se encontró, o null si no se encontró
+        return $resultado ? $resultado['Password'] : null;
+    } catch (PDOException $e) {
+        // Manejar errores
+        echo "Error al obtener la contraseña del administrador: " . $e->getMessage();
+        return null;
+    }
+}
+
+
+function actualizarEstatusEgresados() {
+    try {
+        $conexion = conectarDB();
+
+        // Obtener el ciclo activo
+        $stmt = $conexion->prepare("SELECT Ciclo_Activo FROM ciclo_activo");
+        $stmt->execute();
+        $cicloActivo = $stmt->fetchColumn();
+
+        // Seleccionar todas las matrículas de alumnos que cumplan con las condiciones y tengan al menos un registro en la tabla cursar
+        $stmt = $conexion->prepare("SELECT Matricula FROM alumnos WHERE Estatus != 'Egresado' AND EXISTS (SELECT 1 FROM cursar WHERE cursar.Matricula_Alumno = alumnos.Matricula AND cursar.Ciclo_Escolar = :cicloActivo)");
+        $stmt->bindParam(':cicloActivo', $cicloActivo, PDO::PARAM_STR);
+        $stmt->execute();
+        $matriculas = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($matriculas as $matriculaAlumno) {
+            // Verificar si todas las materias asociadas al alumno cumplen con las condiciones y el ciclo escolar coincide con el ciclo activo
+            $stmt = $conexion->prepare("SELECT COUNT(*) AS total FROM cursar WHERE Matricula_Alumno = :matricula AND (Calificacion IS NULL OR Calificacion < 6) AND Ciclo_Escolar = :cicloActivo");
+            $stmt->bindParam(':matricula', $matriculaAlumno, PDO::PARAM_INT);
+            $stmt->bindParam(':cicloActivo', $cicloActivo, PDO::PARAM_STR);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($result['total'] == 0) {
+                // Todas las materias tienen una calificación mayor o igual a 6 y el ciclo escolar coincide con el ciclo activo
+                // Obtener el semestre del alumno
+                $stmt = $conexion->prepare("SELECT Semestre FROM alumnos WHERE Matricula = :matricula");
+                $stmt->bindParam(':matricula', $matriculaAlumno, PDO::PARAM_INT);
+                $stmt->execute();
+                $semestre = $stmt->fetchColumn();
+
+                if ($semestre >= 9 && $semestre <= 13) {
+                    // El semestre del alumno está entre 9 y 13
+                    // Actualizar el estatus del alumno a "Egresado"
+                    $stmt = $conexion->prepare("UPDATE alumnos SET Estatus = 'Egresado' WHERE Matricula = :matricula");
+                    $stmt->bindParam(':matricula', $matriculaAlumno, PDO::PARAM_INT);
+                    $stmt->execute();
+                }
+            }
+        }
+
+        return true;
+    } catch (PDOException $e) {
+        echo "Error al actualizar los estatus de los alumnos: " . $e->getMessage();
+        return false;
+    }
+}
+
+
+
+
+
+
+function obtenerMatricula() {
+    // Suponiendo que la matrícula se envía desde un formulario POST
+    if (isset($_POST['matricula_alumno'])) {
+        return $_POST['matricula_alumno'];
+    } else {
+        // Si la matrícula no está presente en el formulario, puedes manejar el error o devolver un valor predeterminado
+        return false;
+    }
+}
 
         // Obtener el resultado
         $contraseña = $stmt->fetchColumn();
