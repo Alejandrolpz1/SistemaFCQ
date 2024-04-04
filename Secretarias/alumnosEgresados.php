@@ -38,9 +38,9 @@ $_SESSION['last_activity'] = time();
         <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Selector de Carreras</h1>
     </nav>
     <div class="contenedor2">
-        <p>Por favor, elija la carrera para ver a los estudiantes que han sido desvinculados de esta área de estudio.</p>
+        <p>Por favor, elija la carrera para ver a los estudiantes que han sido egresados de esta área de estudio.</p>
         <div class="parte3">
-            <form action="ListaAlumnosBaja.php" method="post">
+            <form action="ListaAlumnosEgresados.php" method="post">
                 <label for="carrera">Carrera:</label>
 
                 <?php

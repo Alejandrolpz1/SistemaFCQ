@@ -57,7 +57,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "<td>{$alumno['Matricula']}</td>";
                 echo "<td><input type='number' name='calificaciones[{$alumno['Matricula']}]' value='" . (isset($alumno['Calificacion']) ? $alumno['Calificacion'] : '') . "' step='0.1'></td>";
                 // Agregar un campo oculto para la matrícula del alumno
+
                 echo "<input type='hidden'  name='matriculas[]' value='{$alumno['Matricula']}'>";
+
+                echo "<input type='hidden' name='matriculas[]' value='{$alumno['Matricula']}'>";
+
                 echo "</tr>";
 
             }
@@ -105,7 +109,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </script>
 </head>
 <body>
+
     <a href="IndexProfesores.php"><button type="button" class="Boton2">Volver</button></a>
     </div>
+
+    <a href="IndexProfesores.php">Volver a la página principal</a>
+
 </body>
 </html>
