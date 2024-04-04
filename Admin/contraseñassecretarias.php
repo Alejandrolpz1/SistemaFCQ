@@ -81,30 +81,5 @@ if (isset($_POST['numEmp'])) {
 </body>
 </html>
 
-</head>
-<body>
-    <h2>Contraseñas Secretarias</h2>
-    
-    <?php if (isset($mensaje_error)) : ?>
-        <p><?php echo $mensaje_error; ?></p>
-    <?php endif; ?>
 
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-        <label for="numEmp">Seleccionar Secretaria:</label>
-        <select name="numEmp" required>
-            <?php foreach ($secretarias as $secretaria) : ?>
-                <option value="<?php echo $secretaria['NumEmp']; ?>"><?php echo $secretaria['Nombre'] . ' ' . $secretaria['Apellido']; ?></option>
-            <?php endforeach; ?>
-        </select>
-        <input type="submit" value="Ver Contraseña">
-    </form>
-
-    <?php if (isset($contraseña) && isset($nombre_secretaria)) : ?>
-        <h3>Contraseña de <?php echo $nombre_secretaria; ?>:</h3>
-        <p><?php echo $contraseña; ?></p>
-    <?php endif; ?>
-
-    <a href="IndexAdmin.php">Cancelar</a>
-</body>
-</html>
 

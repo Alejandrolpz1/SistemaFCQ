@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION = array();
 
             $_SESSION['admin_usuario'] = $admin_valido['Usuario'];
+            $_SESSION['admin_nombre'] = $admin_valido['NombreCompleto']; // Aquí debes reemplazar 'NombreCompleto' con el nombre del campo que contiene el nombre completo en tu base de datos
 
             header("Location: IndexAdmin.php");
             exit();

@@ -43,7 +43,7 @@ $_SESSION['last_activity'] = time();
         </ul>
         <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80"> Sistema de Control Escolar FCQ</h1>
     </nav>
-    <h2>Bienvenido, <?php echo $_SESSION['admin_usuario']; ?>!</h2>
+    <h2>Bienvenido, <?php echo isset($_SESSION['admin_nombre']) ? $_SESSION['admin_nombre'] : ''; ?>!</h2>
 
     <div class="contenedor">
     <div class="parte">Cerrar Sesión<br><br>
@@ -83,12 +83,12 @@ $_SESSION['last_activity'] = time();
             <div class="parte2"><a href="EliminarProfesores.php"><img src="../iconos/deleteprof.png" width="100"></a></div>
         </div>
 
-        <div class="parte">Agregar ciclo <br><br>
-            <div class="parte2"><a href="Agregaciclo.php"><img src="../iconos/ciclo.png" width="100"></a></div>
-        </div>
-
         <div class="parte">Gestionar ciclo activo <br><br>
             <div class="parte2"><a href="Cicloactivo.php"><img src="../iconos/ciclo.png" width="100"></a></div>
+        </div>
+
+        <div class="parte">Egresados<br>
+            <div class="parte2"><a href="Egresados.php"><img src="../iconos/graduado.png" width="100"></a></div>
         </div>
         <div class="parte">Agregar Materias<br>
             <div class="parte2"><a href="AgregarMaterias.php"><img src="../iconos/AñadirMaterias.png" width="100"></a></div>
@@ -107,30 +107,18 @@ $_SESSION['last_activity'] = time();
         <div class="parte">Contraseñas  Administrador<br>
             <div class="parte2"><a href="contraseñaadmins.php"><img src="../iconos/VerAdmin.png" width="100"></a></div>
         </div>
+       
+
         <div class="parte">Agregar ciclo <br><br>
             <div class="parte2"><a href="Agregaciclo.php"><img src="../iconos/ciclo.png" width="100"></a></div>
         </div>
 
-        </div>
-        <div class="parte">Materias profesores<br>
-            <div class="parte2"><a href="materiasprofesores.php"><img src="../iconos/Vermaterias.png" width="100"></a></div>
-        </div>
 
-        <div class="parte">Contraseñas  Secretarias<br>
-            <div class="parte2"><a href="contraseñassecretarias.php"><img src="../iconos/VerSecres.png" width="100"></a></div>
         </div>
-        <div class="parte">Contraseñas  Profesores<br>
-            <div class="parte2"><a href="contraseñaprofesores.php"><img src="../iconos/Contraprof.png" width="100"></a></div>
-        </div>
-        <div class="parte">Contraseñas  Administrador<br>
-            <div class="parte2"><a href="contraseñaadmins.php"><img src="../iconos/VerAdmin.png" width="100"></a></div>
-        </div>
+      
         
 
-        <div class="parte">Egresados<br>
-            <div class="parte2"><a href="Egresados.php"><img src="../iconos/VerAdmin.png" width="100"></a></div>
-        </div>
-
+    
         
     </div>
     <footer>

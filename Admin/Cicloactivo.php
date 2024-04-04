@@ -52,6 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Llamar a la función para aumentar el semestre de los alumnos
         aumentarSemestreAlumnos();
+
+        
     }
 }
 
