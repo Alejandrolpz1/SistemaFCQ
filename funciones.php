@@ -2601,7 +2601,6 @@ function obtenerMatricula() {
     }
 }
 
-
 function obtenerNombreSecretaria($numEmp) {
     try {
         $conexion = conectarDB();
