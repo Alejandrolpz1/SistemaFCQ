@@ -33,7 +33,7 @@ $_SESSION['last_activity'] = time();
 
     <script>
         // Utiliza el historial del navegador para reemplazar la URL actual con la de SeleccionarCarreraXSemestre.php
-        window.history.replaceState({}, document.title, "CarrerasBaja.php");
+        window.history.replaceState({}, document.title, "alumnosEgresados.php");
     </script>
 </head>
 
@@ -41,9 +41,9 @@ $_SESSION['last_activity'] = time();
     <nav>
         <ul>
             <li><a href="IndexSecretarias.php"><img src="../iconos//homelogo.png" width="20px"><br>Home</a></li>
-            <li><a href="CarrerasBaja.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
+            <li><a href="alumnosEgresados.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
         </ul>
-        <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Registro de Estudiantes Dados de Baja</h1>
+        <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Registro de Estudiantes Egresados</h1>
     </nav>
 
     <?php
@@ -58,46 +58,10 @@ $_SESSION['last_activity'] = time();
     //echo "<td>" . htmlspecialchars($value["Matricula"]) . "</td>";
     $resultadoCarrera = obtenerCarreraid($carrera);
     ?>
-
-    <div class="contenedor2">
-        <p>Lista de estudiantes en baja temporal de <?php echo $resultadoCarrera['Nombre']; ?> </p>
+<div class="contenedor2">
+        <p>Lista de estudiantes egresados de <?php echo $resultadoCarrera['Nombre']; ?> </p>
         <div class="tablas">
-            <table>
-                <tr>
-                    <td>Matricula</td>
-                    <td>Nombre</td>
-                    <td>Apellidos</td>
-                    <td>Grupo</td>
-                    <td>Semestre</td>
-                    <td>Dar de Alta</td>
-                </tr>
-
-                <?php
-                // Verificar si se ha enviado el formulario
-                // Consultar alumnos
-                //$ClaveCarrera = $registros["Clave"];
-
-                $alumnos = obteneralumnosxcarreraEstTem($carrera);
-
-                foreach ($alumnos as $value) {
-                    echo "<tr>";
-                    echo "<td>" . htmlspecialchars($value["Matricula"]) . "</td>";
-                    echo "<td>" . htmlspecialchars($value["Nombre"]) . "</td>";
-                    echo "<td>" . htmlspecialchars($value["Apellido"]) . "</td>";
-                    echo "<td>" . htmlspecialchars($value["Grupo"]) . "</td>";
-                    echo "<td>" . htmlspecialchars($value["Semestre"]) . "</td>";
-                    echo "<td>";
-                    echo "<a href='confirmarAlta.php?Matricula_Alumno=" . htmlspecialchars($value['Matricula']) . "&formacion=" . htmlspecialchars($value['formacion']) . "'>";
-                    echo "<img src='../iconos/alumnosbaja.png' width='32' height='32'></a>";
-                    echo "</td>";
-                    echo "</tr>";
-                }
-                ?>
-            </table>
-        </div>
-
-        <p>Lista de estudiantes en baja permanente de <?php echo $resultadoCarrera['Nombre']; ?> </p>
-        <form action="ConfirmacionEliminarBajaDefinitiva.php" method="POST">
+        <form action="ConfirmacionEliminaregersados.php" method="POST">
         
         <input type="hidden" id="carrera" name="carrera" value="<?php echo $carrera; ?>" required><br><br>
 
@@ -115,7 +79,7 @@ $_SESSION['last_activity'] = time();
                 </tr>
                 <?php
 
-                $alumnos1 = obteneralumnosxcarreraEstPer($carrera);
+                $alumnos1 = obteneralumnosegersados($carrera);
 
                 foreach ($alumnos1 as $value) {
                     echo "<tr>";
@@ -125,7 +89,7 @@ $_SESSION['last_activity'] = time();
                     echo "<td>" . htmlspecialchars($value["Grupo"]) . "</td>";
                     echo "<td>" . htmlspecialchars($value["Semestre"]) . "</td>";
                     echo "<td>";
-                    echo "<a href='ConfirmacionEliminarAlumno2.php?Matricula_Alumno=" . htmlspecialchars($value['Matricula']) . "&Semestre=" . htmlspecialchars($value['Semestre']) . "&Grupo=" . htmlspecialchars($value['Grupo']) ."&Carrera=" . htmlspecialchars($carrera) . "'>";
+                    echo "<a href='ConfirmacionEliminarEgresado.php?Matricula_Alumno=" . htmlspecialchars($value['Matricula']) . "&Semestre=" . htmlspecialchars($value['Semestre']) . "&Grupo=" . htmlspecialchars($value['Grupo']) ."&Carrera=" . htmlspecialchars($carrera) . "'>";
                     echo "<img src='../iconos/eliminar.png' width='32' height='32'></a>";
                     echo "</td>";
                     echo "</tr>";

@@ -2601,7 +2601,6 @@ function obtenerMatricula() {
     }
 }
 
-
 function obtenerNombreSecretaria($numEmp) {
     try {
         $conexion = conectarDB();
@@ -2675,6 +2674,60 @@ function obtenerContraseñaAdmin($usuario) {
         // Manejar errores
         echo "Error al obtener la contraseña del administrador: " . $e->getMessage();
         return null;
+    }
+}
+
+function eliminarGruposAlumnos($carrera, $estatus) {
+    $conexion = conectarDB();
+
+    try {
+        
+        $sql = "DELETE FROM alumnos WHERE formacion = :carrera AND Estatus = :estatus";
+		$sql = $conexion->prepare($sql);
+		$sql -> bindParam(':carrera', $carrera,PDO::PARAM_STR);
+        $sql -> bindParam(':estatus', $estatus,PDO::PARAM_STR);
+		$qryExecute = $sql->execute();
+		if($qryExecute){
+            header("refresh:1;url=PanelAlumnos.php");
+            exit("Operación exitosa. Redirigiendo en 1 segundo...");
+		}
+		else{
+            header("refresh:3;url=PanelAlumnos.php");
+            exit("Ha ocurrido un error. Redirigiendo en tres segundos...");
+        }
+        return $registros;
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
+    }
+}
+
+function obteneralumnosegersados($carrera) {
+    $conexion = conectarDB();
+    try {
+        $estatus = "Egresado";
+        // Consulta SQL
+        $sql = "select *from alumnos where formacion = :carrera and Estatus = :sts  ";
+        $statement = $conexion->prepare($sql);
+        // Asociar valores a los marcadores de posición
+        $statement->bindParam(':carrera', $carrera, PDO::PARAM_STR);
+        $statement->bindParam(':sts', $estatus, PDO::PARAM_STR);
+        // Ejecutar la consulta
+        $statement->execute();
+        // Obtener los resultados
+        $registros = $statement->fetchAll();
+        
+
+        return $registros;
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
     }
 }
 ?>

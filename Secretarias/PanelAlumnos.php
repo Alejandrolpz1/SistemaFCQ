@@ -53,6 +53,10 @@
         <div class="parte2"><a href="CarrerasBaja.php"><img src="../iconos/alumnosbaja.png" width="100"></a></div>
         </div>
 
+        <div class="parte">Alumnos Egresados<br><br>
+        <div class="parte2"><a href="alumnosEgresados.php"><img src="../iconos/graduado.png" width="100"></a></div>
+        </div>
+
 
         </div>
    
