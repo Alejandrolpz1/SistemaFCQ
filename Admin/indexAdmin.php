@@ -93,6 +93,11 @@ $_SESSION['last_activity'] = time();
             <div class="parte2"><a href="contraseñaadmins.php"><img src="../iconos/VerAdmin.png" width="100"></a></div>
         </div>
         
+
+        <div class="parte">Egresados<br>
+            <div class="parte2"><a href="Egresados.php"><img src="../iconos/VerAdmin.png" width="100"></a></div>
+        </div>
+        
     </div>
 </body>
 
