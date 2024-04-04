@@ -14,12 +14,21 @@ if (!isset($_SESSION['admin_usuario']) || empty($_SESSION['admin_usuario'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Materias</title>
+    <link rel="stylesheet" href="../css/csssecretaria.css">
 </head>
 <body>
-    <h2>Agregar Materias</h2>
+<nav>
+    <ul>
+        <li><a href="IndexAdmin.php"><img src="../iconos//homelogo.png" width="20px"><br>Home</a></li>
+        <li><a href="IndexAdmin.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
+    </ul>
+    <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Agregar Materias</h1>
+</nav>
+
+<div class="contenedor2"> <div class="parteu"><h2>Agregar Materias</h2>
     <form action="Asignar_Materias.php" method="post">
-        <label for="formacion">Seleccione una formación:</label>
-        <select name="formacion" id="formacion" required>
+        <label for="formacion">Seleccione una formación:</label><br><br>
+        <select name="formacion"  class="caja" id="formacion" required>
             <option value="" disabled selected>Seleccione una formación</option>
             <!-- Aquí se cargarán dinámicamente las formaciones desde PHP -->
             <?php
@@ -34,10 +43,11 @@ if (!isset($_SESSION['admin_usuario']) || empty($_SESSION['admin_usuario'])) {
                 echo '<option value="' . $formacion['Clave'] . '">' . $formacion['Nombre'] . '</option>';
             }
             ?>
-        </select><br><br>
-        <input type="submit" value="Seleccionar">
+        </select>
+        <input type="submit"  class="Boton" value="Seleccionar">
     </form>
-    <br>
-    <a href="IndexAdmin.php">Volver al Inicio</a>
+
+    <a href="IndexAdmin.php"><button type="button" class="Boton2">Volver Inicio</button></a></div></div>
+    
 </body>
 </html>

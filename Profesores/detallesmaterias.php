@@ -29,13 +29,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         if ($alumnosDetalles) {
+            echo "<div class = 'contenedor2'> ";
             echo "<h2>Detalles de la materia</h2>";
             echo "<p>Nombre de la materia: $nombreMateria</p>";
             echo "<h3>Seleccione el grupo:</h3>";
             echo "<form id='grupoForm' action='guardar_calificaciones.php' method='post'>"; // Formulario que envía los datos a guardar_calificaciones.php
             echo "<input type='hidden' name='numEmpProfesor' value='$numEmpProfesor'>";
             echo "<input type='hidden' name='claveMateria' value='$claveMateria'>";
-            echo "<select id='grupoSelect' name='grupo' onchange='filtrarAlumnos()'>";
+            echo "<select id='grupoSelect'  class='caja' name='grupo' onchange='filtrarAlumnos()'>";
             foreach ($alumnosDetalles as $alumno) {
                 // Almacenar grupos únicos en el array
                 if (!in_array($alumno['Grupo'], $grupos)) {
@@ -45,17 +46,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             echo "</select>";
             echo "<h3>Alumnos que cursan esta materia:</h3>";
-            echo "<table id='alumnosTable' border='1'>";
+            
+            echo "<div class = 'tablas'> ";
+            
+            echo "<table id='alumnosTable'>";
             echo "<tr><th>Nombre del Alumno</th><th>Matrícula</th><th>Calificación</th></tr>";
             foreach ($alumnosDetalles as $alumno) {
                 echo "<tr class='grupo{$alumno['Grupo']}'>"; // Agregar clase con el grupo para filtrar
                 echo "<td>{$alumno['Nombre']} {$alumno['Apellido']}</td>";
                 echo "<td>{$alumno['Matricula']}</td>";
-                echo "<td><input type='number' name='calificaciones[{$alumno['Matricula']}]' value='{$alumno['Calificacion']}' step='0.1'></td>";
+                echo "<td><input type='number' name='calificaciones[{$alumno['Matricula']}]' value='" . (isset($alumno['Calificacion']) ? $alumno['Calificacion'] : '') . "' step='0.1'></td>";
+                // Agregar un campo oculto para la matrícula del alumno
+                echo "<input type='hidden'  name='matriculas[]' value='{$alumno['Matricula']}'>";
                 echo "</tr>";
+
             }
+            
             echo "</table>";
-            echo "<input type='submit' name='guardar' value='Guardar'>"; // Agregar un atributo 'name' al botón 'Guardar'
+            echo "</div> ";
+            echo "<input type='submit'  class='Boton' name='guardar' value='Guardar'>"; // Agregar un atributo 'name' al botón 'Guardar'
             echo "</form>";
         } else {
             echo "<p>No hay alumnos cursando esta materia actualmente.</p>";
@@ -71,7 +80,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -97,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </script>
 </head>
 <body>
-
-    <a href="IndexProfesores.php">Volver a la página principal</a>
+    <a href="IndexProfesores.php"><button type="button" class="Boton2">Volver</button></a>
+    </div>
 </body>
 </html>

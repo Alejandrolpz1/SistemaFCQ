@@ -46,23 +46,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Ciclo Escolar</title>
+    <link rel="stylesheet" href="../css/csssecretaria.css">
 </head>
 <body>
+<nav>
+    <ul>
+        <li><a href="IndexAdmin.php"><img src="../iconos//homelogo.png" width="20px"><br>Home</a></li>
+        <li><a href="IndexAdmin.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
+    </ul>
+    <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Agregar Ciclo Escolar</h1>
+</nav>
 
-    <h2>Agregar Ciclo Escolar</h2>
+<div class="contenedor2">
+    <div class="parteu">
+        <h2>Agregar Ciclo Escolar</h2><br>
 
-    <?php if (isset($mensaje)) : ?>
-        <p><?php echo $mensaje; ?></p>
-    <?php endif; ?>
+        <?php if (isset($mensaje)) : ?>
+            <p><?php echo $mensaje; ?></p>
+        <?php endif; ?>
 
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-        <label for="ciclo_escolar">Ciclo Escolar:</label>
-        <input type="text" name="ciclo_escolar" required><br>
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+            <label for="ciclo_escolar">Ciclo Escolar:</label>
+            <input type="text" class="caja" name="ciclo_escolar" required><br>
 
-        <input type="submit" value="Agregar">
+            <input type="submit" class="Boton" value="Agregar">
 
-        <a href="IndexAdmin.php">Cancelar</a>
-    </form>
+            <a href="IndexAdmin.php"><button type="button" class="Boton2">Cancelar</button></a>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

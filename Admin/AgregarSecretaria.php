@@ -1,7 +1,5 @@
 <?php
-
 session_start();
-
 
 // Verificar la sesión del administrador
 if (!isset($_SESSION['admin_usuario']) || empty($_SESSION['admin_usuario'])) {
@@ -28,7 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $numEmp = $_POST['numEmp'];
     $nombre = $_POST['nombre'];
     $apellido = $_POST['apellido'];
-    $password = $_POST['password'];
+    $plaintext_password = $_POST['password'];
+    $password = password_hash($plaintext_password, PASSWORD_DEFAULT); // Hashear la contraseña
 
     // Llamar a la función para agregar secretaria
     $resultado = agregarSecretaria($numEmp, $nombre, $apellido, $password);
@@ -54,30 +53,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Secretaria</title>
+    <link rel="stylesheet" href="../css/csssecretaria.css">
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="IndexAdmin.php"><img src="../iconos//homelogo.png" width="20px"><br>Home</a></li>
+            <li><a href="IndexAdmin.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
+        </ul>
+        <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Eliminar Administrador</h1>
+    </nav>
+    
+    <div class="contenedor2">
+        <h2>Agregar Secretaria</h2><br>
 
-    <h2>Agregar Secretaria</h2>
+        <?php if (isset($mensaje)) : ?>
+            <p><?php echo $mensaje; ?></p>
+        <?php endif; ?>
 
-    <?php if (isset($mensaje)) : ?>
-        <p><?php echo $mensaje; ?></p>
-    <?php endif; ?>
+        <div class="parteu">
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+                <label for="numEmp">Número de Empleado:</label>
+                <input type="text" class="caja" name="numEmp" required><br>
 
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-        <label for="numEmp">Número de Empleado:</label>
-        <input type="text" name="numEmp" required><br>
+                <label for="nombre">Nombre:</label><br>
+                <input type="text" class="caja" name="nombre" required><br>
 
-        <label for="nombre">Nombre:</label>
-        <input type="text" name="nombre" required><br>
+                <label for="apellido">Apellido:</label><br>
+                <input type="text" class="caja" name="apellido" required><br>
 
-        <label for="apellido">Apellido:</label>
-        <input type="text" name="apellido" required><br>
+                <label for="password">Contraseña:</label><br>
+                <input type="password" class="caja" name="password" required><br>
 
-        <label for="password">Contraseña:</label>
-        <input type="password" name="password" required><br>
-
-        <input type="submit" value="Agregar">
-    </form>
-
+                <input type="submit" class="Boton" value="Agregar">
+            </form>
+        </div>
+    </div>
 </body>
 </html>
