@@ -70,7 +70,7 @@ if (isset($_GET['id'])) {
     <link rel="stylesheet" href="../css/csssecretaria.css">
 </head>
 <body>
-<nav>
+    <nav>
         <ul>
             <li><a href="IndexAdmin.php"><img src="../iconos//homelogo.png" width="20px"><br>Home</a></li>
             <li><a href="IndexAdmin.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
@@ -78,53 +78,51 @@ if (isset($_GET['id'])) {
         <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Editar Administrador</h1>
     </nav>
     
-    <div class = "contenedor2">
-        <div class = "parteu"><?php if (isset($admin)) : ?>
-            
-        <!-- Mostrar formulario de edición si se seleccionó un administrador -->
-        <h2>Editar Administrador</h2>
-        <?php if (isset($mensaje)) : ?>
-            <p><?php echo $mensaje; ?></p>
-        <?php endif; ?>
-        <form action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $admin['Id']; ?>" method="post">
-            <input type="hidden" name="id" value="<?php echo $admin['Id']; ?>">
-            <label for="nombre">Nombre:</label>
-            <input type="text" class = "caja"  name="nombre" value="<?php echo $admin['Nombre']; ?>" required><br>
+    <div class="contenedor2">
+        <div class="parteu">
+            <?php if (isset($admin)) : ?>
+                <!-- Mostrar formulario de edición si se seleccionó un administrador -->
+                <h2>Editar Administrador</h2>
+                <?php if (isset($mensaje)) : ?>
+                    <p><?php echo $mensaje; ?></p>
+                <?php endif; ?>
+                <form action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $admin['Id']; ?>" method="post">
+                    <input type="hidden" name="id" value="<?php echo $admin['Id']; ?>">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" class="caja" name="nombre" value="<?php echo $admin['Nombre']; ?>" required><br>
 
-            <label for="apellido">Apellido:</label>
-            <input type="text" class = "caja"  name="apellido" value="<?php echo $admin['Apellido']; ?>" required><br>
+                    <label for="apellido">Apellido:</label>
+                    <input type="text" class="caja" name="apellido" value="<?php echo $admin['Apellido']; ?>" required><br>
 
-            <label for="cargo">Cargo:</label>
-            <input type="text"  class = "caja"  name="cargo" value="<?php echo $admin['Cargo']; ?>" required><br>
+                    <label for="cargo">Cargo:</label>
+                    <input type="text" class="caja" name="cargo" value="<?php echo $admin['Cargo']; ?>" required><br>
 
-            <label for="usuario">Usuario:</label>
-            <input type="text" class = "caja"  name="usuario" value="<?php echo $admin['Usuario']; ?>" required><br>
+                    <label for="usuario">Usuario:</label>
+                    <input type="text" class="caja" name="usuario" value="<?php echo $admin['Usuario']; ?>" required><br>
 
-            <label for="password">Contraseña:</label>
-            <input type="password" class = "caja"  name="password" value="" required><br>
+                    <label for="password">Contraseña:</label>
+                    <input type="password" class="caja" name="password" value="" required><br>
 
-            <input type="submit" class = "Boton" value="Guardar Cambios">
-            <!-- Botón de cancelar para regresar a la lista de administradores -->
-            <a href="editaradmin.php" style="margin-left: 10px;">Cancelar</a>
-        </form><?php else : ?>
-        <!-- Mostrar lista de administradores si no se ha seleccionado uno para editar -->
-
-        
-        <h2>Lista de Administradores</h2><br>
-        <ul>
-            <?php foreach ($admins as $admin) : ?>
-                <li>
-                    <?php echo $admin['Nombre'] . ' ' . $admin['Apellido']; ?>
-                    <a href="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $admin['Id']; ?>"><button class="Boton">Editar</button></a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-        <!-- Botón de cancelar para regresar al index -->
-        <a href="indexadmin.php"><button class="Boton2">Cancelar</button> </a>
-    <?php endif; ?></div>
-        
+                    <input type="submit" class="Boton" value="Guardar Cambios">
+                    <!-- Botón de cancelar para regresar a la lista de administradores -->
+                    <a href="editaradmin.php" style="margin-left: 10px;"><button type="button" class="Boton2">Regresar</button></a>
+                </form>
+            <?php else : ?>
+                <!-- Mostrar lista de administradores si no se ha seleccionado uno para editar -->
+                <h2>Lista de Administradores</h2><br>
+                <ul>
+                    <?php foreach ($admins as $admin) : ?>
+                        <li>
+                            <?php echo $admin['Nombre'] . ' ' . $admin['Apellido']; ?>
+                            <a href="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $admin['Id']; ?>"><button class="Boton">Editar</button></a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <!-- Botón de cancelar para regresar al index -->
+                <a href="indexadmin.php"><button class="Boton2">Cancelar</button></a>
+            <?php endif; ?>
+        </div>
     </div>
-    
 
 </body>
 </html>

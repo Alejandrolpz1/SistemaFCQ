@@ -60,8 +60,16 @@ if (isset($_GET['id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eliminar Administrador</title>
+    <link rel="stylesheet" href="../css/csssecretaria.css">
 </head>
 <body>
+<nav>
+        <ul>
+            <li><a href="IndexAdmin.php"><img src="../iconos//homelogo.png" width="20px"><br>Home</a></li>
+            <li><a href="IndexAdmin.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
+        </ul>
+        <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Eliminar Administrador</h1>
+    </nav>
 
     <?php if (isset($admin)) : ?>
         <!-- Mostrar confirmación de eliminación si se seleccionó un administrador -->
@@ -69,28 +77,39 @@ if (isset($_GET['id'])) {
         <?php if (isset($mensaje)) : ?>
             <p><?php echo $mensaje; ?></p>
         <?php else : ?>
-            <p>¿Estás seguro de que deseas eliminar al administrador <?php echo $admin['Nombre'] . ' ' . $admin['Apellido']; ?>?</p>
+            <div class = "contenedor2">
+            <div class = "parteu"><p>¿Estás seguro de que deseas eliminar al administrador <?php echo $admin['Nombre'] . ' ' . $admin['Apellido']; ?>?</p>
             <form action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $admin['Id']; ?>" method="post">
                 <input type="hidden" name="confirmar" value="1">
-                <input type="submit" value="Confirmar Eliminación">
+                <input type="submit" class = "Boton" value="Confirmar">
                 <!-- Botón de cancelar para regresar a la lista de administradores -->
-                <a href="indexadmin.php" style="margin-left: 10px;">Cancelar</a>
-            </form>
+                <a href="indexadmin.php" style="margin-left: 10px;"><button type="button" class = "Boton2" >Cancelar</button></a>
+            </form></div></div>
+            
         <?php endif; ?>
-    <?php else : ?>
-        <!-- Mostrar lista de administradores si no se ha seleccionado uno para eliminar -->
-        <h2>Lista de Administradores</h2>
+
+        
+        <?php else : ?>
+            <div class = "contenedor2">
+            <div class = "parteu"><!-- Mostrar lista de administradores si no se ha seleccionado uno para eliminar -->
+        <h2>Lista de Administradores</h2><br>
         <ul>
             <?php foreach ($admins as $admin) : ?>
                 <li>
                     <?php echo $admin['Nombre'] . ' ' . $admin['Apellido']; ?>
-                    <a href="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $admin['Id']; ?>">Eliminar</a>
+                    <a href="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $admin['Id']; ?>"><button type="button" class = "Boton" >Eliminar</button></a>
                 </li>
             <?php endforeach; ?>
         </ul>
         <!-- Botón de cancelar para regresar al index -->
-        <a href="indexadmin.php">Cancelar </a>
-    <?php endif; ?>
+        <a href="indexadmin.php"><button type="button" class = "Boton2" >Cancelar</button></a></div>
+
+            
+            
+        </div>
+        
+    <?php endif; ?> 
+    
 
 </body>
 </html>

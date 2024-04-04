@@ -1,7 +1,5 @@
 <?php
-
 session_start();
-
 
 // Verificar la sesión del administrador
 if (!isset($_SESSION['admin_usuario']) || empty($_SESSION['admin_usuario'])) {
@@ -60,35 +58,53 @@ if (isset($_GET['numEmp'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eliminar Secretaria</title>
+    <link rel="stylesheet" href="../css/csssecretaria.css">
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="IndexAdmin.php"><img src="../iconos//homelogo.png" width="20px"><br>Home</a></li>
+            <li><a href="IndexAdmin.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
+        </ul>
+        <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Eliminar Secretarias</h1>
+    </nav>
 
     <?php if (isset($secretaria)) : ?>
         <!-- Mostrar formulario de eliminación si se seleccionó una secretaria -->
-        <h2>Eliminar Secretaria</h2>
-        <?php if (isset($mensaje)) : ?>
-            <p><?php echo $mensaje; ?></p>
-        <?php endif; ?>
-        <form action="<?php echo $_SERVER['PHP_SELF'] . '?numEmp=' . $secretaria['NumEmp']; ?>" method="post">
-            <input type="hidden" name="numEmp" value="<?php echo $secretaria['NumEmp']; ?>">
-            <p>¿Estás seguro de que quieres eliminar a <?php echo $secretaria['Nombre'] . ' ' . $secretaria['Apellido']; ?>?</p>
-            <input type="submit" value="Eliminar">
-            <!-- Botón de cancelar para regresar a la lista de secretarias -->
-            <a href="eliminar_secretaria.php" style="margin-left: 10px;">Cancelar</a>
-        </form>
+        <div class="contenedor2">
+            <h2>Eliminar Secretaria</h2>
+            <?php if (isset($mensaje)) : ?>
+                <p><?php echo $mensaje; ?></p>
+            <?php endif; ?>
+            <div>
+                <form action="<?php echo $_SERVER['PHP_SELF'] . '?numEmp=' . $secretaria['NumEmp']; ?>" method="post">
+                    <input type="hidden" name="numEmp" value="<?php echo $secretaria['NumEmp']; ?>">
+                    <p>¿Estás seguro de que quieres eliminar a <?php echo $secretaria['Nombre'] . ' ' . $secretaria['Apellido']; ?>?</p>
+                    <input type="submit" class="Boton" value="Eliminar">
+                    <!-- Botón de cancelar para regresar a la lista de secretarias -->
+                    <br><a href="eliminar_secretaria.php" style="margin-left: 10px;"><button type="button" class="Boton2">Cancelar</button></a>
+                </form>
+            </div>
+        </div>
     <?php else : ?>
         <!-- Mostrar lista de secretarias si no se ha seleccionado una para eliminar -->
-        <h2>Lista de Secretarias</h2>
-        <ul>
-            <?php foreach ($secretarias as $secretaria) : ?>
-                <li>
-                    <?php echo $secretaria['Nombre'] . ' ' . $secretaria['Apellido']; ?>
-                    <a href="<?php echo $_SERVER['PHP_SELF'] . '?numEmp=' . $secretaria['NumEmp']; ?>">Eliminar</a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-        <!-- Botón de cancelar para regresar al index -->
-        <a href="indexadmin.php">Cancelar</a>
+        <div class="contenedor2">
+        <div class="parteu">
+            <h2>Lista de Secretarias</h2><br>
+            <div>
+                <ul>
+                    <?php foreach ($secretarias as $secretaria) : ?>
+                        <li>
+                            <?php echo $secretaria['Nombre'] . ' ' . $secretaria['Apellido']; ?>
+                            <a href="<?php echo $_SERVER['PHP_SELF'] . '?numEmp=' . $secretaria['NumEmp']; ?>">Eliminar</a><br><br>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <!-- Botón de cancelar para regresar al index -->
+                <a href="indexadmin.php"><button type="button" class="Boton2">Cancelar</button></a>
+            </div>
+        </div>
+        </div>
     <?php endif; ?>
 
 </body>

@@ -46,6 +46,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numEmp'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contraseñas Profesores</title>
+    <link rel="stylesheet" href="../css/csssecretaria.css">
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a href="IndexAdmin.php"><img src="../iconos//homelogo.png" width="20px"><br>Home</a></li>
+        <li><a href="AgregarMaterias.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
+    </ul>
+    <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Contraseñas Profesores</h1>
+</nav>
+
+<div class="contenedor2">
+    <div class="parteu">
+        <h2>Contraseñas Profesores</h2>
+    
+        <?php if (!empty($mensaje_error)) : ?>
+            <p><?php echo $mensaje_error; ?></p>
+        <?php endif; ?>
+
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+            <label for="numEmp">Seleccionar Profesor:</label>
+            <select name="numEmp"  class="caja" required>
+                <?php foreach ($profesores as $profesor) : ?>
+                    <option value="<?php echo $profesor['NumEmp']; ?>"><?php echo $profesor['Nombre'] . ' ' . $profesor['Apellidos']; ?></option>
+                <?php endforeach; ?>
+            </select>
+            <input type="submit" class="Boton" value="Ver Contraseña">
+        </form>
+
+        <?php if (!empty($nombre_profesor)) : ?>
+      
+        <?php endif; ?>
+
+        <?php if (!empty($contraseña)) : ?>
+            <h3>Contraseña de <?php echo $nombre_profesor; ?>:</h3>
+            <p><?php echo $contraseña; ?></p>
+        <?php endif; ?>
+
+        <a href="IndexAdmin.php"><button type="button" class="Boton2">Cancelar</button></a>
+    </div>
+</div>
+    
+</body>
+</html>
+
 </head>
 <body>
     <h2>Contraseñas Profesores</h2>

@@ -3,7 +3,6 @@ include('../funciones.php');
 
 session_start();
 
-
 // Verificar la sesión del administrador
 if (!isset($_SESSION['admin_usuario']) || empty($_SESSION['admin_usuario'])) {
     header("Location: LoginAdmin.php");
@@ -49,24 +48,41 @@ if (isset($_GET['numEmp'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eliminar Profesor</title>
+    <link rel="stylesheet" href="../css/csssecretaria.css">
 </head>
 <body>
+<nav>
+    <ul>
+        <li><a href="IndexAdmin.php"><img src="../iconos//homelogo.png" width="20px"><br>Home</a></li>
+        <li><a href="IndexAdmin.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
+    </ul>
+    <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Eliminar Profesores</h1>
+</nav>
 
-    <?php if (isset($mensaje)) : ?>
+<?php if (isset($mensaje)) : ?>
+    <div class="contenedor2">
         <h2><?php echo $mensaje; ?></h2>
-    <?php else : ?>
-        <h2>Lista de Profesores</h2>
-        <ul>
-            <?php foreach ($profesores as $profesor) : ?>
-                <li>
-                    <?php echo $profesor['Nombre'] . ' ' . $profesor['Apellidos']; ?>
-                    <a href="<?php echo $_SERVER['PHP_SELF'] . '?numEmp=' . $profesor['NumEmp']; ?>">Eliminar</a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-        <!-- Botón de cancelar para regresar al index -->
-        <a href="indexAdmin.php">Cancelar </a>
-    <?php endif; ?>
+        <div class="loader">
+            <div class="justify-content-center jimu-primary-loading"></div>
+        </div>
+    </div>
+<?php else : ?>
+    <div class="contenedor2">
+        <div class="parteu">
+            <h2>Lista de Profesores</h2><br>
+            <ul>
+                <?php foreach ($profesores as $profesor) : ?>
+                    <li>
+                        <?php echo $profesor['Nombre'] . ' ' . $profesor['Apellidos']; ?>
+                        <a href="<?php echo $_SERVER['PHP_SELF'] . '?numEmp=' . $profesor['NumEmp']; ?>">Eliminar</a><br><br>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <!-- Botón de cancelar para regresar al index -->
+            <a href="indexAdmin.php"><button type="button" class="Boton2">Cancelar</button></a>
+        </div>
+    </div>
+<?php endif; ?>
 
 </body>
 </html>
