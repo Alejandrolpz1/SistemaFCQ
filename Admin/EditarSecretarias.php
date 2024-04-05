@@ -103,7 +103,7 @@ if (isset($_GET['numEmp'])) {
             </form>
         </div>
     </div>
- 
+            
 
     <?php else : ?>
     <div class="contenedor2">
