@@ -505,12 +505,12 @@ function obtenerGrupo() {
 }
 
 
-function editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password) {
+function editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password,$formacion) {
     $conexion = conectarDB();
 
     try {
         // Consulta preparada para evitar la inyección SQL
-        $consulta = $conexion->prepare("UPDATE admin SET Nombre = :nombre, Apellido = :apellido, Cargo = :cargo, Usuario = :usuario, Password = :password WHERE Id = :id");
+        $consulta = $conexion->prepare("UPDATE admin SET Nombre = :nombre, Apellido = :apellido, Cargo = :cargo, Usuario = :usuario, Password = :password, formacion_academica = :formacion WHERE Id = :id");
 
         $consulta->bindParam(':nombre', $nombre, PDO::PARAM_STR);
         $consulta->bindParam(':apellido', $apellido, PDO::PARAM_STR);
@@ -520,6 +520,7 @@ function editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password) {
         // Hash de la contraseña
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $consulta->bindParam(':password', $passwordHash, PDO::PARAM_STR);
+        $consulta->bindParam(':formacion', $formacion, PDO::PARAM_STR);
 
         $consulta->bindParam(':id', $id, PDO::PARAM_INT);
 
@@ -647,12 +648,12 @@ function generarPDFKardex($numero_matricula, $ciclo_escolar) {
     // Agregar contenido al PDF (puedes personalizar esto según tus necesidades)
     $pdf->SetFont('Helvetica', '', 11);
     // Logo de la UABJO en el lado izquierdo superior
-    $pdf->Image('iconos/UBAJOLOGOCONFONDO.jpg', 10, 7, 20, '', 'JPG');
+    $pdf->Image('../iconos/UBAJOLOGOCONFONDO.jpg', 10, 7, 20, '', 'JPG');
     // Logo de la FCQ en el lado derecho superior
-    $pdf->Image('iconos/FCQLOGOCONFONDO.jpg', 180, 7, 20, '', 'JPG');
+    $pdf->Image('../iconos/FCQLOGOCONFONDO.jpg', 180, 7, 20, '', 'JPG');
     // Título de la Universidad en el centro
     $pdf->Cell(0, 10, "UNIVERSIDAD AUTÓNOMA \"BENITO JUÁREZ\" DE OAXACA", 0, 1, 'C');
-    $pdf->Image('iconos/Adorno.png', 45, 18, 120, '', 'PNG');
+    $pdf->Image('../iconos/Adorno.png', 45, 18, 120, '', 'PNG');
 
     // Subtítulo de la Facultad centrado y más pequeño
     $pdf->SetFont('Helvetica', 'B', 10);
@@ -1973,7 +1974,7 @@ function obtenerListaMaterias() {
     }
 }
 
-function asociarMateriaProfesor($numEmp, $materias) {
+function asociarMateriaProfesorConLaboratorio($numEmp, $materias, $laboratorioId) {
     try {
         $conexion = conectarDB();
 
@@ -1998,18 +1999,19 @@ function asociarMateriaProfesor($numEmp, $materias) {
             return;
         }
 
-        // Asociar materias al profesor con el ciclo escolar activo
+        // Asociar materias al profesor con el ciclo escolar activo y vincular al laboratorio
         foreach ($materias as $materia) {
-            $stmt = $conexion->prepare("INSERT INTO prof_mat (NumEmp, Clave_Materia, Ciclo_Escolar) VALUES (:numEmp, :materia, :ciclo_escolar)");
+            $stmt = $conexion->prepare("INSERT INTO prof_mat (NumEmp, Clave_Materia, Ciclo_Escolar, laboratorio) VALUES (:numEmp, :materia, :ciclo_escolar, :laboratorioId)");
             $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
             $stmt->bindParam(':materia', $materia, PDO::PARAM_STR);
             $stmt->bindParam(':ciclo_escolar', $ciclo_escolar, PDO::PARAM_STR);
+            $stmt->bindParam(':laboratorioId', $laboratorioId, PDO::PARAM_INT);
             $stmt->execute();
         }
 
-        echo "Materias asociadas al profesor correctamente.";
+        echo "Materias asociadas al profesor y vinculadas al laboratorio correctamente.";
     } catch (PDOException $e) {
-        echo "Error al asociar la materia al profesor: " . $e->getMessage();
+        echo "Error al asociar la materia al profesor y vincular al laboratorio: " . $e->getMessage();
     }
 }
 
@@ -2638,6 +2640,36 @@ function obteneralumnosegersados($carrera) {
     } catch (PDOException $e) {
         error_log("Error de base de datos: " . $e->getMessage(), 0);
         return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
+    }
+}
+
+
+
+function consultarprofesmat($ciclobueno) {
+    $conexion = conectarDB();
+
+    try {
+        $sql = "SELECT pm.NumEmp, p.Nombre AS NombreProfesor, p.Apellidos AS ApellidosProfesor, m.Nombre AS NombreMateria, lab.NomLaboratorio AS NombreLaboratorio 
+                FROM prof_mat pm 
+                INNER JOIN profesores p ON pm.NumEmp = p.NumEmp 
+                INNER JOIN materias m ON pm.Clave_Materia = m.Clave 
+                INNER JOIN laboratorios lab ON pm.laboratorio = lab.IdLaboratorios 
+                WHERE pm.Ciclo_Escolar = :cicloactual";
+        
+        $statement = $conexion->prepare($sql);
+        $statement->bindParam(':cicloactual', $ciclobueno, PDO::PARAM_INT);
+        $statement->execute();
+        $registros2 = $statement->fetchAll();
+
+        // Devolver un array vacío si no hay resultados
+        return $registros2 ? $registros2 : [];
+        
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return [];  // Devolver un array vacío en caso de error
     } finally {
         // Cerrar la conexión
         $conexion = null;
