@@ -99,7 +99,7 @@ $_SESSION['last_activity'] = time();
         <form action="#" method="post">
             
                 <label for="materia1">Materia1:</label>
-                <input type="text" class ="caja" name="materia1" id="materia1" readonly><br>
+                <input type="text" class="caja" name="materia1" id="materia1" required><br>
 
                 <label for="materia2">Materia2:</label>
                 <input type="text" class ="caja" name="materia2" id="materia2" readonly><br>
