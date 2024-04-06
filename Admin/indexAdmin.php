@@ -118,6 +118,7 @@ $_SESSION['last_activity'] = time();
             <div class="parte2"><a href="Agregaciclo.php"><img src="../iconos/ciclo.png" width="100"></a></div>
         </div>
 
+
         </div>
       
         
