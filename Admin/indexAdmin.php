@@ -114,17 +114,6 @@ $_SESSION['last_activity'] = time();
         </div>
 
 
-        <div class="parte">Laboratorios <br><br>
-            <div class="parte2"><a href="ListaLaboratoriosAdmin.php"><img src="../iconos/laboratorios.png" width="100"></a></div>
-        </div>
-
-
-        </div>
-      
-        
-
-
-
         </div>
       
         

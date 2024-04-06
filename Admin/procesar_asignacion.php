@@ -11,12 +11,13 @@ if (!isset($_SESSION['admin_usuario']) || empty($_SESSION['admin_usuario'])) {
 
 // Verificar si se ha enviado el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtener el número de empleado del profesor y las materias seleccionadas
+    // Obtener el número de empleado del profesor, las materias seleccionadas y el ID del laboratorio
     $numEmp = $_POST['profesor'];
     $materiasSeleccionadas = isset($_POST['materias']) ? $_POST['materias'] : array();
+    $laboratorioId = $_POST['laboratorio'];
 
-    // Asociar las materias al profesor
-    asociarMateriaProfesor($numEmp, $materiasSeleccionadas);
+    // Asociar las materias al profesor y vincularlas al laboratorio seleccionado
+    asociarMateriaProfesorConLaboratorio($numEmp, $materiasSeleccionadas, $laboratorioId);
 }
 ?>
 
