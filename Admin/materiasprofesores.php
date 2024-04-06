@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <nav>
         <ul>
             <li><a href="IndexAdmin.php"><img src="../iconos//homelogo.png" width="20px"><br>Home</a></li>
-            <li><a href="AgregarMaterias.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
+            <li><a href="IndexAdmin.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
         </ul>
         <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Materias de Profesor</h1>
     </nav>

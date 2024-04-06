@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION = array();
 
             $_SESSION['admin_usuario'] = $admin_valido['Usuario'];
+            $_SESSION['admin_nombre'] = $admin_valido['NombreCompleto']; // Aquí debes reemplazar 'NombreCompleto' con el nombre del campo que contiene el nombre completo en tu base de datos
 
             header("Location: IndexAdmin.php");
             exit();
@@ -54,11 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
             <h2>Iniciar sesión</h2><br>
             <form action="LoginAdmin.php" method="post">
-                <label for="Usuario">Nombre de usuario:</label>
+                <label for="Usuario"></label>
                 <input type="text" class="caja" id="Usuario" placeholder="Nombre de usuario" name="Usuario" class="nombre" required>
                 <br>
-                <label for="Password">Contraseña (hash):</label>
-                <input type="password" class="caja" id="Password" placeholder="Contraseña (hash)" name="Password" class="pass" required>
+                <label for="Password"></label>
+                <input type="password" class="caja" id="Password" placeholder="Contraseña" name="Password" class="pass" required>
                 <br>
                 <button type="submit" name="register">
                     Iniciar

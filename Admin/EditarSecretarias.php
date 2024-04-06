@@ -103,23 +103,7 @@ if (isset($_GET['numEmp'])) {
             </form>
         </div>
     </div>
-    <!-- Mostrar formulario de edición si se seleccionó una secretaria -->
-
-        <form action="<?php echo $_SERVER['PHP_SELF'] . '?numEmp=' . $secretaria['NumEmp']; ?>" method="post">
-            <input type="hidden" name="numEmp" value="<?php echo $secretaria['NumEmp']; ?>">
-            <label for="nombre">Nombre:</label>
-            <input type="text" name="nombre" value="<?php echo $secretaria['Nombre']; ?>" required><br>
-
-            <label for="apellido">Apellido:</label>
-            <input type="text" name="apellido" value="<?php echo $secretaria['Apellido']; ?>" required><br>
-
-            <label for="password">Contraseña:</label>
-            <input type="password" name="password" value="" required><br>
-
-            <input type="submit" value="Guardar Cambios">
-            <!-- Botón de cancelar para regresar a la lista de secretarias -->
-            <a href="IndexAdmin.php" style="margin-left: 10px;">Cancelar</a>
-        </form>
+            
 
     <?php else : ?>
     <div class="contenedor2">

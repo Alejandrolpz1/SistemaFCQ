@@ -44,24 +44,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['actualizar_egresados']
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actualizar Estatus de Egresados</title>
+    <link rel="stylesheet" href="../css/csssecretaria.css">
 </head>
 <body>
+<nav>
+        <ul>
+            <li><a href="IndexAdmin.php"><img src="../iconos//homelogo.png" width="20px"><br>Home</a></li>
+            <li><a href="IndexAdmin.php"><img src="../iconos//back.png" width="20px"><br>Atras</a></li>
+        </ul>
+        <h1 id="tituloLaboratorio"><img src="../iconos/logoFCQ.png" width="80">Actualizar Estatus de Egresados</h1>
+    </nav>
 
-    <h2>Actualizar Estatus de Egresados</h2>
+    <div class="contenedor2">
+    <div class="parteu"><h2>Actualizar Estatus de Egresados</h2>
 
-    <?php if (!empty($mensaje_exito)) : ?>
-        <p style="color: green;"><?php echo $mensaje_exito; ?></p>
-    <?php endif; ?>
+<?php if (!empty($mensaje_exito)) : ?>
+    <p style="color: green;"><?php echo $mensaje_exito; ?></p>
+<?php endif; ?>
 
-    <?php if (!empty($mensaje_error)) : ?>
-        <p style="color: red;"><?php echo $mensaje_error; ?></p>
-    <?php endif; ?>
+<?php if (!empty($mensaje_error)) : ?>
+    <p style="color: red;"><?php echo $mensaje_error; ?></p>
+<?php endif; ?>
 
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-        <input type="submit" name="actualizar_egresados" value="Actualizar Egresados">
-    </form>
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    <input type="submit" class="Boton4"  name="actualizar_egresados" value="Actualizar Egresados">
+</form>
 
-    <a href="IndexAdmin.php">Cancelar</a>
+<a href="IndexAdmin.php"><button type="button" class="Boton4">Cancelar</button></a></div></div>
+
+    
 
 </body>
 </html>
