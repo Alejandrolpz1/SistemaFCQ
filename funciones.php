@@ -647,12 +647,12 @@ function generarPDFKardex($numero_matricula, $ciclo_escolar) {
     // Agregar contenido al PDF (puedes personalizar esto según tus necesidades)
     $pdf->SetFont('Helvetica', '', 11);
     // Logo de la UABJO en el lado izquierdo superior
-    $pdf->Image('iconos/UBAJOLOGOCONFONDO.jpg', 10, 7, 20, '', 'JPG');
+    $pdf->Image('../iconos/UBAJOLOGOCONFONDO.jpg', 10, 7, 20, '', 'JPG');
     // Logo de la FCQ en el lado derecho superior
-    $pdf->Image('iconos/FCQLOGOCONFONDO.jpg', 180, 7, 20, '', 'JPG');
+    $pdf->Image('../iconos/FCQLOGOCONFONDO.jpg', 180, 7, 20, '', 'JPG');
     // Título de la Universidad en el centro
     $pdf->Cell(0, 10, "UNIVERSIDAD AUTÓNOMA \"BENITO JUÁREZ\" DE OAXACA", 0, 1, 'C');
-    $pdf->Image('iconos/Adorno.png', 45, 18, 120, '', 'PNG');
+    $pdf->Image('../iconos/Adorno.png', 45, 18, 120, '', 'PNG');
 
     // Subtítulo de la Facultad centrado y más pequeño
     $pdf->SetFont('Helvetica', 'B', 10);
@@ -1973,7 +1973,7 @@ function obtenerListaMaterias() {
     }
 }
 
-function asociarMateriaProfesor($numEmp, $materias) {
+function asociarMateriaProfesorConLaboratorio($numEmp, $materias, $laboratorioId) {
     try {
         $conexion = conectarDB();
 
@@ -1998,18 +1998,19 @@ function asociarMateriaProfesor($numEmp, $materias) {
             return;
         }
 
-        // Asociar materias al profesor con el ciclo escolar activo
+        // Asociar materias al profesor con el ciclo escolar activo y vincular al laboratorio
         foreach ($materias as $materia) {
-            $stmt = $conexion->prepare("INSERT INTO prof_mat (NumEmp, Clave_Materia, Ciclo_Escolar) VALUES (:numEmp, :materia, :ciclo_escolar)");
+            $stmt = $conexion->prepare("INSERT INTO prof_mat (NumEmp, Clave_Materia, Ciclo_Escolar, laboratorio) VALUES (:numEmp, :materia, :ciclo_escolar, :laboratorioId)");
             $stmt->bindParam(':numEmp', $numEmp, PDO::PARAM_INT);
             $stmt->bindParam(':materia', $materia, PDO::PARAM_STR);
             $stmt->bindParam(':ciclo_escolar', $ciclo_escolar, PDO::PARAM_STR);
+            $stmt->bindParam(':laboratorioId', $laboratorioId, PDO::PARAM_INT);
             $stmt->execute();
         }
 
-        echo "Materias asociadas al profesor correctamente.";
+        echo "Materias asociadas al profesor y vinculadas al laboratorio correctamente.";
     } catch (PDOException $e) {
-        echo "Error al asociar la materia al profesor: " . $e->getMessage();
+        echo "Error al asociar la materia al profesor y vincular al laboratorio: " . $e->getMessage();
     }
 }
 
