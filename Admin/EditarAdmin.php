@@ -40,11 +40,12 @@ if (isset($_GET['id'])) {
         $apellido = $_POST['apellido'];
         $cargo = $_POST['cargo'];
         $usuario = $_POST['usuario'];
+        $formacion = $_POST['formacion'];
         $plaintext_password = $_POST['password']; // Contraseña en texto plano
         $password = password_hash($plaintext_password, PASSWORD_DEFAULT); // Hashear la contraseña
 
         // Llamar a la función para editar administrador
-        $resultado = editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password);
+        $resultado = editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password, $formacion);
 
         // Verificar el resultado
         if ($resultado) {
@@ -88,6 +89,12 @@ if (isset($_GET['id'])) {
                 <?php endif; ?>
                 <form action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $admin['Id']; ?>" method="post">
                     <input type="hidden" name="id" value="<?php echo $admin['Id']; ?>">
+                    
+                    <label for="formacion">Formación:</label>
+                    <input type="text" class="caja" name="formacion" value="<?php echo $admin['formacion_academica']; ?>" required onmouseover="mostrarMensaje()" onmouseout="ocultarMensaje()"><br>
+                    <span id="mensaje" style="display: none;">Por favor, proporcione detalles abreviados sobre su formación académica.<br></span>
+
+
                     <label for="nombre">Nombre:</label>
                     <input type="text" class="caja" name="nombre" value="<?php echo $admin['Nombre']; ?>" required><br>
 
@@ -125,5 +132,14 @@ if (isset($_GET['id'])) {
     </div>
 
 </body>
+<script>
+function mostrarMensaje() {
+    document.getElementById("mensaje").style.display = "inline";
+}
+
+function ocultarMensaje() {
+    document.getElementById("mensaje").style.display = "none";
+}
+</script>
 </html>
 

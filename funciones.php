@@ -505,12 +505,12 @@ function obtenerGrupo() {
 }
 
 
-function editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password) {
+function editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password,$formacion) {
     $conexion = conectarDB();
 
     try {
         // Consulta preparada para evitar la inyección SQL
-        $consulta = $conexion->prepare("UPDATE admin SET Nombre = :nombre, Apellido = :apellido, Cargo = :cargo, Usuario = :usuario, Password = :password WHERE Id = :id");
+        $consulta = $conexion->prepare("UPDATE admin SET Nombre = :nombre, Apellido = :apellido, Cargo = :cargo, Usuario = :usuario, Password = :password, formacion_academica = :formacion WHERE Id = :id");
 
         $consulta->bindParam(':nombre', $nombre, PDO::PARAM_STR);
         $consulta->bindParam(':apellido', $apellido, PDO::PARAM_STR);
@@ -520,6 +520,7 @@ function editarAdmin($id, $nombre, $apellido, $cargo, $usuario, $password) {
         // Hash de la contraseña
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $consulta->bindParam(':password', $passwordHash, PDO::PARAM_STR);
+        $consulta->bindParam(':formacion', $formacion, PDO::PARAM_STR);
 
         $consulta->bindParam(':id', $id, PDO::PARAM_INT);
 
@@ -2639,6 +2640,36 @@ function obteneralumnosegersados($carrera) {
     } catch (PDOException $e) {
         error_log("Error de base de datos: " . $e->getMessage(), 0);
         return false;
+    } finally {
+        // Cerrar la conexión
+        $conexion = null;
+    }
+}
+
+
+
+function consultarprofesmat($ciclobueno) {
+    $conexion = conectarDB();
+
+    try {
+        $sql = "SELECT pm.NumEmp, p.Nombre AS NombreProfesor, p.Apellidos AS ApellidosProfesor, m.Nombre AS NombreMateria, lab.NomLaboratorio AS NombreLaboratorio 
+                FROM prof_mat pm 
+                INNER JOIN profesores p ON pm.NumEmp = p.NumEmp 
+                INNER JOIN materias m ON pm.Clave_Materia = m.Clave 
+                INNER JOIN laboratorios lab ON pm.laboratorio = lab.IdLaboratorios 
+                WHERE pm.Ciclo_Escolar = :cicloactual";
+        
+        $statement = $conexion->prepare($sql);
+        $statement->bindParam(':cicloactual', $ciclobueno, PDO::PARAM_INT);
+        $statement->execute();
+        $registros2 = $statement->fetchAll();
+
+        // Devolver un array vacío si no hay resultados
+        return $registros2 ? $registros2 : [];
+        
+    } catch (PDOException $e) {
+        error_log("Error de base de datos: " . $e->getMessage(), 0);
+        return [];  // Devolver un array vacío en caso de error
     } finally {
         // Cerrar la conexión
         $conexion = null;

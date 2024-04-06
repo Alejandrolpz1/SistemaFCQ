@@ -65,10 +65,20 @@ $registros = consultarLaboratorios();
             <!-- Formulario para generar PDF -->
             <form action="PdfLaboratorio.php" method="POST">
                 <input type="hidden" name="datos_laboratorio" value='<?php echo json_encode($registros); ?>'>
-                <button type="submit" name="generar_pdf">Generar PDF</button>
+                <button type="submit" class="buttonDownload" id="btnDownloadPDF1" name="register">
+                    PDF Lista Laboratorios
+                </button>
             </form>
+
+            <form action="PdfLaboratorioProf.php" method="POST">
+        <input type="hidden" name="datos_profes" value='<?php echo json_encode($registros2); ?>'>
+        <button type="submit" class="buttonDownload" id="btnDownloadPDF" name="register">
+                    PDF Relación Profesores, Materias y Laboratorios
+                </button>
+    </form>
         </div>
     </div>
+   
 </body>
 
 </html>

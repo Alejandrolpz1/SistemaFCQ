@@ -63,7 +63,26 @@ $_SESSION['last_activity'] = time();
         <div class="parte">Editar Admin<br><br>
             <div class="parte2"><a href="EditarAdmin.php"><img src="../iconos/editar_admin.png" width="100"></a></div>
         </div>
-        
+
+        <div class="parte">Laboratorios <br><br>
+            <div class="parte2"><a href="ListaLaboratoriosAdmin.php"><img src="../iconos/laboratorios.png" width="100"></a></div>
+        </div>
+
+        <div class="parte">Gestionar ciclo activo <br><br>
+            <div class="parte2"><a href="Cicloactivo.php"><img src="../iconos/ciclo.png" width="100"></a></div>
+        </div>
+
+        <div class="parte">Egresados<br>
+            <div class="parte2"><a href="Egresados.php"><img src="../iconos/graduado.png" width="100"></a></div>
+        </div>
+        <div class="parte">Agregar Materias<br>
+            <div class="parte2"><a href="AgregarMaterias.php"><img src="../iconos/AñadirMaterias.png" width="100"></a></div>
+
+        </div>
+        <div class="parte">Materias profesores<br>
+            <div class="parte2"><a href="materiasprofesores.php"><img src="../iconos/Vermaterias.png" width="100"></a></div>
+        </div> 
+
         <div class="parte">Agregar Secretaria<br><br>
             <div class="parte2"><a href="AgregarSecretaria.php"><img src="../iconos/secre.png" width="100"></a></div>
         </div>
@@ -83,20 +102,6 @@ $_SESSION['last_activity'] = time();
             <div class="parte2"><a href="EliminarProfesores.php"><img src="../iconos/deleteprof.png" width="100"></a></div>
         </div>
 
-        <div class="parte">Gestionar ciclo activo <br><br>
-            <div class="parte2"><a href="Cicloactivo.php"><img src="../iconos/ciclo.png" width="100"></a></div>
-        </div>
-
-        <div class="parte">Egresados<br>
-            <div class="parte2"><a href="Egresados.php"><img src="../iconos/graduado.png" width="100"></a></div>
-        </div>
-        <div class="parte">Agregar Materias<br>
-            <div class="parte2"><a href="AgregarMaterias.php"><img src="../iconos/AñadirMaterias.png" width="100"></a></div>
-
-        </div>
-        <div class="parte">Materias profesores<br>
-            <div class="parte2"><a href="materiasprofesores.php"><img src="../iconos/Vermaterias.png" width="100"></a></div>
-        </div>
 
         <div class="parte">Contraseñas  Secretarias<br>
             <div class="parte2"><a href="contraseñassecretarias.php"><img src="../iconos/VerSecres.png" width="100"></a></div>
