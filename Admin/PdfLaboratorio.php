@@ -68,10 +68,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['datos_laboratorio']))
     $pdf->Ln(20);
     $pdf->Cell(120, 5, "        ___________________________", 0, 0);
     $pdf->Cell(80, 5, " ___________________________", 0, 1);
+    $pdf->Cell(125, 5, "                            Director", 0, 0);
+    $pdf->Cell(80, 5, "    Coordinador Académico ", 0, 1);
+    $pdf->Cell(115, 5, "     {$director['formacion_academica']} {$director['Nombre']} {$director['Apellido']}", 0, 0);
+    $pdf->Cell(80, 5, "       {$coordinador['formacion_academica']} {$coordinador['Nombre']} {$coordinador['Apellido']}", 0, 1);
+    
+
+    /*$pdf->Ln(20);
+    $pdf->Cell(120, 5, "        ___________________________", 0, 0);
+    $pdf->Cell(80, 5, " ___________________________", 0, 1);
     $pdf->Cell(125, 5, "                Coordinador Académico ", 0, 0);
     $pdf->Cell(80, 5, "                    Director", 0, 1);
     $pdf->Cell(115, 5, "       {$coordinador['formacion_academica']} {$coordinador['Nombre']} {$coordinador['Apellido']}", 0, 0);
-    $pdf->Cell(80, 5, "{$director['formacion_academica']} {$director['Nombre']} {$director['Apellido']}", 0, 1);
+    $pdf->Cell(80, 5, "{$director['formacion_academica']} {$director['Nombre']} {$director['Apellido']}", 0, 1); */
+
+    
 
     // Obtener la fecha y hora actual
     date_default_timezone_set('America/Mexico_City'); // Establecer zona horaria a México

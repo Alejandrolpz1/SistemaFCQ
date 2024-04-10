@@ -734,10 +734,19 @@ function generarPDFKardex($numero_matricula, $ciclo_escolar) {
     $pdf->Ln(10);
     $pdf->Cell(120, 5, "        ___________________________", 0, 0);
     $pdf->Cell(80, 5, " ___________________________", 0, 1);
+    $pdf->Cell(125, 5, "                           Director", 0, 0);
+    $pdf->Cell(80, 5, "       Coordinador Académico ", 0, 1);
+    $pdf->Cell(115, 5, "      {$director['formacion_academica']} {$director['Nombre']} {$director['Apellido']}", 0, 0);
+    $pdf->Cell(80, 5, "       {$coordinador['formacion_academica']} {$coordinador['Nombre']} {$coordinador['Apellido']}", 0, 1);
+    
+
+    /*$pdf->Ln(10);
+    $pdf->Cell(120, 5, "        ___________________________", 0, 0);
+    $pdf->Cell(80, 5, " ___________________________", 0, 1);
     $pdf->Cell(125, 5, "                Coordinador Académico ", 0, 0);
     $pdf->Cell(80, 5, "                    Director", 0, 1);
     $pdf->Cell(115, 5, "       {$coordinador['formacion_academica']} {$coordinador['Nombre']} {$coordinador['Apellido']}", 0, 0);
-    $pdf->Cell(80, 5, "{$director['formacion_academica']} {$director['Nombre']} {$director['Apellido']}", 0, 1);
+    $pdf->Cell(80, 5, "{$director['formacion_academica']} {$director['Nombre']} {$director['Apellido']}", 0, 1);*/
     date_default_timezone_set('America/Mexico_City'); // Establecer zona horaria a México
     $fecha_actual = date("d/m/Y H:i:s");
 

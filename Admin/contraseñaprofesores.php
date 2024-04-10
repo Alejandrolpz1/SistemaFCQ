@@ -89,35 +89,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numEmp'])) {
 </div>
     
 </body>
-</html>
 
-</head>
-<body>
-    <h2>Contraseñas Profesores</h2>
-    
-    <?php if (!empty($mensaje_error)) : ?>
-        <p><?php echo $mensaje_error; ?></p>
-    <?php endif; ?>
-
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-        <label for="numEmp">Seleccionar Profesor:</label>
-        <select name="numEmp" required>
-            <?php foreach ($profesores as $profesor) : ?>
-                <option value="<?php echo $profesor['NumEmp']; ?>"><?php echo $profesor['Nombre'] . ' ' . $profesor['Apellidos']; ?></option>
-            <?php endforeach; ?>
-        </select>
-        <input type="submit" value="Ver Contraseña">
-    </form>
-
-    <?php if (!empty($nombre_profesor)) : ?>
-      
-    <?php endif; ?>
-
-    <?php if (!empty($contraseña)) : ?>
-        <h3>Contraseña de <?php echo $nombre_profesor; ?>:</h3>
-        <p><?php echo $contraseña; ?></p>
-    <?php endif; ?>
-
-    <a href="IndexAdmin.php">Cancelar</a>
-</body>
 </html>
